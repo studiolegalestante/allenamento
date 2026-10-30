@@ -1,0 +1,442 @@
+<!doctype html><html lang="it"><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><title>Allenamento</title><meta name="theme-color" content="#141b22"><meta name="mobile-web-app-capable" content="yes"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png"><link rel="apple-touch-icon" href="icons/icon-192.png"></head><body>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: una colonna da telefono, testata sticky con i giorni, schede esercizio, barra timer fissa in basso */
+:root{
+  --bg:#f3f5f7; --card:#ffffff; --fg:#141b22; --muted:#56616d; --line:#d9dfe5;
+  --a:#1f5fa8; --b:#13756b; --c:#b5520f; --d:#6a3d9a; --stop:#b3261e; --stopbg:#fdeceb; --done:#1d7a3a;
+  --display:'Barlow Condensed','Arial Narrow',sans-serif; --body:'Barlow',system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0f1418; --card:#182027; --fg:#e8edf1; --muted:#9aa6b1; --line:#2a343d;
+  --a:#5b9be6; --b:#3fb3a5; --c:#ec8a46; --d:#a983db; --stop:#f2877f; --stopbg:#3a1d1b; --done:#58c27a; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1418; --card:#182027; --fg:#e8edf1; --muted:#9aa6b1; --line:#2a343d;
+  --a:#5b9be6; --b:#3fb3a5; --c:#ec8a46; --d:#a983db; --stop:#f2877f; --stopbg:#3a1d1b; --done:#58c27a; color-scheme:dark}
+html,body{background:var(--bg);color:var(--fg)}
+body{font-family:var(--body);font-size:16px;line-height:1.4;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 110px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.wrap{max-width:560px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:12px 8px;display:flex;flex-direction:column;gap:10px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.topr{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.unit{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--card)}
+.ubtn{background:transparent;border:0;color:var(--muted);font:700 14px var(--body);padding:6px 10px;min-height:36px;min-width:40px;cursor:pointer}
+.ubtn[aria-pressed="true"]{background:var(--fg);color:var(--bg)}
+.ubtn:focus-visible{outline:3px solid var(--fg);outline-offset:-3px}
+h1{font-family:var(--display);font-size:28px;margin:0;text-transform:uppercase;letter-spacing:.5px;text-wrap:balance}
+.meta{font-size:14px;color:var(--muted);text-align:right;font-variant-numeric:tabular-nums}
+.days{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.day{border:2px solid var(--k);background:transparent;color:var(--k);border-radius:10px;padding:8px 4px;font-family:var(--display);font-size:24px;line-height:1;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;min-height:56px;position:relative}
+.day small{font-family:var(--body);font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.4px}
+.day[aria-pressed="true"]{background:var(--k);color:var(--card)}
+.day .today{position:absolute;top:-8px;right:-4px;background:var(--fg);color:var(--bg);font-family:var(--body);font-size:10px;font-weight:700;padding:1px 5px;border-radius:6px;letter-spacing:.3px}
+.mode{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--card)}
+.mbtn{background:transparent;border:0;color:var(--muted);font:600 14px var(--body);padding:8px 6px;min-height:40px;cursor:pointer}
+.mbtn[aria-pressed="true"]{background:var(--fg);color:var(--bg)}
+.note{font-size:14px;color:var(--fg);background:var(--bg);border-radius:8px;padding:8px 10px;margin-top:4px}
+.day:focus-visible,.mbtn:focus-visible,button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible,.wl:focus-visible{outline:3px solid var(--fg);outline-offset:2px}
+.intro{border-left:0;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:4px}
+.intro h2{font-family:var(--display);font-size:22px;margin:0;color:var(--k);text-transform:uppercase}
+.intro p{margin:0;color:var(--muted);font-size:15px}
+.ex{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:10px}
+.ex.complete{border-color:var(--done)}
+.exhead{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.exname{font-weight:700;font-size:18px;line-height:1.25;min-width:0}
+.tag{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--k)}
+.how{color:var(--muted);font-size:15px;margin:0}
+.vid{flex:none;display:inline-flex;align-items:center;gap:6px;border:2px solid var(--k);color:var(--k);border-radius:999px;padding:6px 12px;font-weight:700;font-size:14px;text-decoration:none;min-height:36px}
+.vid svg{width:14px;height:14px}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.mbtn2{background:transparent;border:0;color:var(--muted);font:600 14px var(--body);padding:8px 6px;min-height:40px;cursor:pointer}
+.mbtn2[aria-pressed="true"]{background:var(--fg);color:var(--bg)}
+.mbtn2:focus-visible{outline:3px solid var(--fg);outline-offset:-3px}
+.set small{display:block;font:600 11px var(--body);letter-spacing:.2px}
+.set{min-width:64px;width:64px;min-height:48px;border-radius:10px;border:2px solid var(--line);background:transparent;color:var(--fg);font-family:var(--display);font-size:20px;cursor:pointer;font-variant-numeric:tabular-nums}
+.set[aria-pressed="true"]{background:var(--done);border-color:var(--done);color:var(--card)}
+.kg{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:14px;color:var(--muted)}
+.kg label{font-weight:600;color:var(--fg)}
+.sc{display:flex;flex-direction:column;align-items:center;gap:4px}
+.sc input.w{width:64px;min-height:40px;border:2px solid var(--line);border-radius:8px;background:var(--bg);color:var(--fg);font:600 16px var(--body);text-align:center;font-variant-numeric:tabular-nums}
+.sc input.w::placeholder{color:var(--muted);opacity:.8}
+.lg{border-top:1px solid var(--line);padding-top:8px;margin-top:8px;display:flex;flex-direction:column;gap:4px}
+.lgh{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.lgd{color:#fff;font-family:var(--display);font-size:18px;line-height:1;padding:3px 9px;border-radius:6px}
+.lgr{display:flex;justify-content:space-between;gap:8px;font-size:14px}
+.lgr span:first-child{color:var(--muted);min-width:0}
+.lgv{white-space:nowrap;font-variant-numeric:tabular-nums}
+.kg input{width:76px;min-height:44px;border:2px solid var(--line);border-radius:10px;background:var(--bg);color:var(--fg);font:600 18px var(--body);text-align:center;font-variant-numeric:tabular-nums}
+.sugg{font-variant-numeric:tabular-nums}
+details{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+summary{font-weight:700;cursor:pointer;min-height:28px}
+details ul{margin:8px 0 0;padding-left:18px;display:flex;flex-direction:column;gap:4px}
+.stopbox{background:var(--stopbg);border:2px solid var(--stop);border-radius:12px;padding:12px 14px;font-size:15px}
+.stopbox b{color:var(--stop)}
+.reset{align-self:flex-start;background:transparent;border:1px solid var(--line);color:var(--muted);border-radius:10px;padding:10px 14px;font:600 14px var(--body);cursor:pointer;min-height:44px}
+.timer{position:fixed;left:0;right:0;bottom:0;z-index:6;background:var(--fg);color:var(--bg);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:12px calc(12px + env(safe-area-inset-bottom,0px));display:flex;align-items:center;gap:12px}
+.timer .t{font-family:var(--display);font-size:34px;font-variant-numeric:tabular-nums;min-width:72px}
+.timer .lbl{flex:1;min-width:0;font-size:14px}
+.timer #snd{padding:10px}
+.timer #snd[aria-pressed="false"]{opacity:.5}
+.timer #snd[aria-pressed="false"] .w1,.timer #snd[aria-pressed="false"] .w2{display:none}
+.timer button{background:var(--bg);color:var(--fg);border:0;border-radius:10px;padding:10px 14px;font:700 14px var(--body);min-height:44px;cursor:pointer}
+.bar{position:absolute;left:0;top:0;height:4px;background:var(--done);transition:width 1s linear}
+a.wl{color:var(--d);font-weight:700;text-decoration:none;white-space:nowrap}
+.warm{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:10px}
+.warm h2{font-family:var(--display);font-size:22px;margin:0;text-transform:uppercase}
+.warm p{margin:-6px 0 0;color:var(--muted);font-size:14px}
+.wrow{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:10px}
+.wtxt{font-weight:600;min-width:0;flex:1 1 160px}
+.wlinks{display:flex;gap:6px;flex-wrap:wrap}
+.warm .vid{--k:var(--d)}
+footer{font-size:13px;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){.bar{transition:none}}
+.mbtn2{background:transparent;border:0;color:var(--muted);font:600 14px var(--body);padding:8px 6px;min-height:40px;cursor:pointer}
+.desc{margin:0;font-size:14px;line-height:1.4}
+.mus{margin:0;font-size:13px;color:var(--muted)}
+.mus b{color:var(--k);font-weight:700}
+.exd{background:var(--bg);border-radius:8px;padding:8px 10px;display:flex;flex-direction:column;gap:4px}
+.exd summary{font-size:14px;color:var(--k);min-height:24px}
+.btns{display:flex;flex-direction:column;gap:6px;align-items:flex-end;flex:none}
+.vid.tmr{background:transparent;cursor:pointer;font-family:var(--body)}
+.timer.work{background:var(--k,#1f5fa8)}
+.timer.work{background:#13756b;color:#fff}
+.timer.work button{background:#fff;color:#13756b}
+.lang{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--card)}
+
+.musline{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:13px}
+.mchip{border:1px solid var(--k);color:var(--k);border-radius:999px;padding:4px 10px;font:600 13px var(--body);background:transparent;cursor:pointer;min-height:32px}
+.mchip[aria-pressed="true"]{background:var(--k);color:var(--card)}
+.mchip.pri{border-width:2px;font-weight:800}
+.mchip.pri::before{content:'★ '}
+.mleg2{font-size:12px;color:var(--muted);width:100%}
+.mchip:disabled{cursor:default;opacity:.7}
+.cmap{background:var(--bg);border-radius:10px;padding:8px;display:flex;flex-direction:column;gap:4px}
+.cmap svg{max-height:200px}
+.cmap .mcap{font-size:13px;text-align:center}
+.bodyb{border:0;background:transparent;color:var(--k);font:700 13px var(--body);text-decoration:underline;cursor:pointer;padding:4px 2px;min-height:32px}
+.mapwrap{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.mapwrap figure{margin:0;text-align:center;display:flex;flex-direction:column-reverse;align-items:center;gap:6px;padding:4px 2px}
+.mapwrap figure+figure{border-left:2px dashed var(--line)}
+.face{fill:var(--muted);pointer-events:none}
+.spine{stroke:var(--muted);stroke-width:1.5;stroke-dasharray:3 3;fill:none;pointer-events:none}
+.cmtop{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.cmx{border:1px solid var(--line);background:var(--card);color:var(--fg);border-radius:8px;font:600 13px var(--body);padding:6px 10px;min-height:32px;cursor:pointer}
+.mapwrap figcaption{font:700 14px var(--display);color:var(--bg);background:var(--fg);border-radius:999px;padding:4px 14px;text-transform:uppercase;letter-spacing:1px}
+.mapwrap figcaption small{display:block;font:500 10px var(--body);letter-spacing:.2px;text-transform:none;opacity:.8}
+.mapwrap svg{width:100%;height:auto;max-height:360px}
+.sil{fill:var(--line)}
+.rg{fill:var(--card);stroke:var(--muted);stroke-width:1;cursor:pointer;transition:fill .2s}
+.rg.on{fill:var(--k);stroke:var(--fg)}
+.rg.lo{fill:var(--k);fill-opacity:.45}
+.rg.sel{stroke:var(--fg);stroke-width:2.5}
+.mcap{font-size:14px;min-height:20px}
+.mleg{display:flex;flex-wrap:wrap;gap:6px}
+.lchip{border:1px solid var(--line);background:var(--card);color:var(--muted);border-radius:999px;padding:5px 10px;font:600 13px var(--body);cursor:pointer;min-height:32px}
+.lchip.on{border-color:var(--k);color:var(--k)}
+.lchip[aria-pressed="true"]{background:var(--k);color:var(--card);border-color:var(--k)}
+.dbox{display:flex;flex-direction:column;gap:8px;margin-top:8px;font-size:14px}
+.dbox p{margin:0;color:var(--muted)}
+.dbox textarea{width:100%;box-sizing:border-box;min-height:90px;border:2px solid var(--line);border-radius:8px;background:var(--bg);color:var(--fg);font:13px ui-monospace,monospace;padding:8px}
+.dbtns{display:flex;gap:8px;flex-wrap:wrap}
+.dbtns button{border:1px solid var(--line);background:var(--card);color:var(--fg);border-radius:10px;padding:10px 14px;font:600 14px var(--body);min-height:44px;cursor:pointer}
+.dmsg{font-weight:600;min-height:20px}
+.mtools{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;align-items:center}
+</style>
+
+<div class="wrap">
+<header>
+  <div class="top">
+    <h1 id="h1">Allenamento</h1>
+    <div class="topr"><div class="meta" id="meta"></div>
+      <div class="lang" role="group" id="langG"><button type="button" class="ubtn lbtn" data-l="it" aria-pressed="true">IT</button><button type="button" class="ubtn lbtn" data-l="en" aria-pressed="false">EN</button></div>
+      <div class="unit" role="group" id="unitG"><button type="button" class="ubtn" id="u-kg" data-u="kg" aria-pressed="true">kg</button><button type="button" class="ubtn" id="u-lb" data-u="lb" aria-pressed="false">lb</button></div></div>
+  </div>
+  <div class="days" role="group" id="daysG">
+    <button class="day" id="btn-A" data-day="A" style="--k:var(--a)" aria-pressed="false">A<small></small></button>
+    <button class="day" id="btn-B" data-day="B" style="--k:var(--b)" aria-pressed="false">B<small></small></button>
+    <button class="day" id="btn-C" data-day="C" style="--k:var(--c)" aria-pressed="false">C<small></small></button>
+    <button class="day" id="btn-D" data-day="D" style="--k:var(--d)" aria-pressed="false">D<small></small></button>
+  </div>
+  <div class="mode" role="group" id="pwG"><button type="button" class="pbtn mbtn2" data-p="fix" aria-pressed="false"></button><button type="button" class="pbtn mbtn2" data-p="up" aria-pressed="true"></button></div>
+  <div class="mode" role="group" id="eqG">
+    <button type="button" class="mbtn" id="m-bil" data-mode="bil" aria-pressed="false"></button>
+    <button type="button" class="mbtn" id="m-full" data-mode="full" aria-pressed="false"></button>
+  </div>
+</header>
+
+<section class="intro" id="intro"></section>
+<section class="warm" id="warm" style="--k:var(--fg)"></section>
+
+<div id="list" style="display:flex;flex-direction:column;gap:12px"></div>
+<button class="reset" id="reset" type="button"></button>
+
+<section class="intro" id="mapS"></section>
+
+<section class="intro" style="--k:var(--fg)"><h2 id="logT"></h2><div id="log"></div></section>
+
+<div class="stopbox" id="stop"></div>
+
+<details>
+  <summary id="rulesT"></summary>
+  <ul id="rules"></ul>
+</details>
+<details id="dataBox"><summary id="dataT"></summary><div id="dataC" class="dbox"></div></details>
+<footer id="foot"></footer>
+</div>
+
+<div class="timer" id="timer" hidden>
+  <div class="bar" id="bar" style="width:100%"></div>
+  <div class="t" id="tt" aria-live="polite">75</div>
+  <div class="lbl" id="tl"></div>
+  <button type="button" id="snd" aria-pressed="true"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path class="w1" d="M16 8.5a5 5 0 0 1 0 7" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/><path class="w2" d="M18.5 6a9 9 0 0 1 0 12" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg></button>
+  <button type="button" id="plus">+15"</button>
+  <button type="button" id="skip"></button>
+</div>
+
+<script>
+const EX={"panca":{"it":["Panca piana con manubri","Presa neutra; piedi sulla panca se inarchi la schiena","Sdraiati con scapole addotte e lombare appoggiata. Manubri all'altezza del petto, gomiti a circa 45° dal busto. Spingi in alto ed espira, scendi in 2-3 secondi fino a sfiorare il petto.","Pettorale, deltoide anteriore, tricipite"],"en":["Flat dumbbell bench press","Neutral grip; feet on the bench if your back arches","Lie down with shoulder blades pulled back and lower back resting on the bench. Dumbbells at chest level, elbows about 45° from the torso. Press up as you exhale, lower in 2-3 seconds until just above the chest.","Pectorals, front deltoid, triceps"],"kg":["12","14","16"],"q":"panca piana manubri presa neutra esecuzione corretta"},"croci":{"it":["Croci su panca piana","Leggere, gomiti morbidi","Braccia quasi tese sopra il petto, gomiti leggermente piegati e bloccati. Apri le braccia in arco fino a sentire tensione sul petto, non oltre la linea delle spalle. Richiudi stringendo il petto.","Pettorale, deltoide anteriore"],"en":["Flat dumbbell flyes","Light, soft elbows","Arms almost straight above the chest, elbows slightly bent and locked in that angle. Open the arms in an arc until you feel a stretch in the chest, not below shoulder line. Close by squeezing the chest.","Pectorals, front deltoid"],"kg":["6","8","10"],"q":"croci manubri panca piana esecuzione corretta"},"spinte":{"it":["Spinte manubri da seduto","Schienale alto, mai in piedi","Seduto con schiena appoggiata e piedi a terra. Manubri a lato delle orecchie, palmi in avanti o neutri. Spingi in alto senza bloccare i gomiti, scendi lento. Non inarcare la zona lombare.","Deltoide, tricipite, trapezio superiore"],"en":["Seated dumbbell shoulder press","High backrest, never standing","Sit with your back supported and feet flat. Dumbbells beside the ears, palms forward or neutral. Press up without locking the elbows, lower slowly. Do not arch the lower back.","Deltoids, triceps, upper trapezius"],"kg":["8","10","12"],"q":"shoulder press manubri seduto schienale esecuzione"},"spinte_muro":{"it":["Spinte manubri da seduto","Seduto in fondo alla panca, schiena contro il muro; mai in piedi","Seduto sulla panca con la schiena contro il muro, piedi a terra. Manubri a lato delle orecchie, palmi neutri. Spingi in alto senza bloccare i gomiti, scendi lento. Non staccare la schiena dal muro.","Deltoide, tricipite, trapezio superiore"],"en":["Seated dumbbell shoulder press","Sit at the end of the bench, back against the wall; never standing","Sit on the bench with your back against the wall, feet flat. Dumbbells beside the ears, neutral palms. Press up without locking the elbows, lower slowly. Keep your back on the wall.","Deltoids, triceps, upper trapezius"],"kg":["8","10","12"],"q":"shoulder press manubri seduto esecuzione"},"laterali":{"it":["Alzate laterali da seduto","Fino all'altezza delle spalle","Seduto, busto fermo, manubri lungo i fianchi. Solleva le braccia di lato con gomiti appena piegati fino all'altezza delle spalle, mignolo leggermente più alto del pollice. Scendi in 2 secondi.","Deltoide laterale"],"en":["Seated lateral raises","Up to shoulder height","Seated, torso still, dumbbells at your sides. Raise the arms out to the side with slightly bent elbows up to shoulder height, little finger slightly higher than the thumb. Lower in 2 seconds.","Lateral deltoid"],"kg":["4","5","7"],"q":"alzate laterali manubri seduto esecuzione corretta"},"squeeze":{"it":["Squeeze press con manubri","Manubri uniti al centro del petto, presa neutra","Sdraiato sulla panca, manubri uniti sopra il petto con i palmi uno verso l'altro. Spingi in alto continuando a premerli uno contro l'altro per tutta la salita. Scendi lento fino al petto.","Pettorale (parte interna), tricipite"],"en":["Dumbbell squeeze press","Dumbbells pressed together at mid-chest, neutral grip","Lie on the bench, dumbbells touching above the chest, palms facing each other. Press up while squeezing them together throughout the lift. Lower slowly to the chest.","Pectorals (inner part), triceps"],"kg":["6","8","10"],"q":"squeeze press manubri panca piana esecuzione"},"kickback":{"it":["Kickback con manubrio in appoggio","Mano e ginocchio sulla panca, gomito fermo","Mano e ginocchio sulla panca, schiena piatta. Braccio di lavoro con gomito alto e fermo lungo il fianco. Distendi l'avambraccio all'indietro fino a braccio dritto, pausa 1 secondo, torna lento.","Tricipite"],"en":["Supported dumbbell kickback","Hand and knee on the bench, elbow still","Hand and knee on the bench, flat back. Working arm with the elbow high and fixed at your side. Extend the forearm back until the arm is straight, pause 1 second, return slowly.","Triceps"],"kg":["5","6","8"],"q":"kickback tricipiti manubrio appoggio panca esecuzione"},"kickback_cavo":{"it":["Kickback con manubrio in appoggio","Gomito fermo; se c'è il cavo: pushdown 15→25 kg","Mano e ginocchio sulla panca, schiena piatta. Braccio di lavoro con gomito alto e fermo lungo il fianco. Distendi l'avambraccio all'indietro fino a braccio dritto, pausa 1 secondo, torna lento.","Tricipite"],"en":["Supported dumbbell kickback","Elbow still; if there is a cable: pushdown 15→25 kg","Hand and knee on the bench, flat back. Working arm with the elbow high and fixed at your side. Extend the forearm back until the arm is straight, pause 1 second, return slowly.","Triceps"],"kg":["5","6","8"],"q":"kickback tricipiti manubrio appoggio panca esecuzione"},"deadbug":{"it":["Dead bug","Zona lombare sempre a terra","Supino, braccia verso il soffitto, ginocchia piegate a 90° sopra le anche. Espira e allunga lentamente braccio destro e gamba sinistra verso terra senza che la lombare si stacchi. Torna e alterna.","Addome profondo (trasverso), retto addominale, flessori dell'anca"],"en":["Dead bug","Lower back always on the floor","Lie on your back, arms up to the ceiling, knees bent 90° over the hips. Exhale and slowly extend the right arm and left leg toward the floor without letting the lower back lift. Return and alternate.","Deep core (transversus), rectus abdominis, hip flexors"],"kg":["corpo libero","corpo libero","corpo libero"],"q":"dead bug esercizio core esecuzione","core":true},"plank":{"it":["Plank sugli avambracci","Settimana 1 con ginocchia a terra","Gomiti sotto le spalle, corpo in linea da testa a talloni. Stringi glutei e addome, non lasciare cadere il bacino né alzarlo. Respira normalmente. Se la lombare cede, appoggia le ginocchia.","Addome, obliqui, glutei, spalle"],"en":["Forearm plank","Week 1 with knees on the floor","Elbows under the shoulders, body in a straight line from head to heels. Squeeze glutes and abs, do not let the hips sag or rise. Breathe normally. If the lower back gives, drop the knees.","Abs, obliques, glutes, shoulders"],"kg":["corpo libero","corpo libero","corpo libero"],"q":"plank avambracci esecuzione corretta principianti","core":true},"plank_lat":{"it":["Plank laterale sulle ginocchia","Bacino alto, in linea","Sul fianco, gomito sotto la spalla, ginocchia piegate e appoggiate. Solleva il bacino fino ad allineare spalla, anca e ginocchio. Tieni senza ruotare il busto, poi cambia lato.","Obliqui, quadrato dei lombi, medio gluteo"],"en":["Side plank on knees","Hips up, in line","On your side, elbow under the shoulder, knees bent and resting on the floor. Lift the hips until shoulder, hip and knee are aligned. Hold without rotating the torso, then switch sides.","Obliques, quadratus lumborum, gluteus medius"],"kg":["corpo libero","corpo libero","corpo libero"],"q":"plank laterale ginocchia esecuzione","core":true},"mcgill":{"it":["Curl-up di McGill","Mani sotto la schiena, tenuta 5\"","Supino, una gamba piegata e una tesa, mani sotto la curva lombare per conservarla. Solleva testa e spalle di pochi centimetri senza piegare il collo, tieni 5 secondi, scendi. Il collo resta neutro.","Retto addominale, addome profondo"],"en":["McGill curl-up","Hands under the lower back, 5\" hold","On your back, one leg bent and one straight, hands under the lumbar curve to preserve it. Lift head and shoulders a few centimetres without bending the neck, hold 5 seconds, lower. Neck stays neutral.","Rectus abdominis, deep core"],"kg":["corpo libero","corpo libero","corpo libero"],"q":"McGill curl up esecuzione","core":true},"rematore":{"it":["Rematore con manubrio in appoggio","Mano e ginocchio sulla panca, schiena piatta","Mano e ginocchio sulla panca, schiena piatta e parallela al pavimento. Tira il manubrio verso il fianco portando il gomito indietro e in alto, scapola che si chiude. Scendi lento senza ruotare il busto.","Gran dorsale, romboidi, trapezio, bicipite"],"en":["Supported one-arm dumbbell row","Hand and knee on the bench, flat back","Hand and knee on the bench, back flat and parallel to the floor. Pull the dumbbell toward the hip, elbow back and up, shoulder blade squeezing in. Lower slowly without rotating the torso.","Latissimus dorsi, rhomboids, trapezius, biceps"],"kg":["14","17","20"],"q":"rematore manubrio appoggio panca esecuzione corretta"},"lat":{"it":["Lat machine","Se manca: rematore a due manubri col petto su panca inclinata","Seduto con cosce bloccate, presa poco più larga delle spalle o neutra. Tira la barra al petto portando i gomiti in basso e indietro, busto appena inclinato. Risali lento senza strappi.","Gran dorsale, bicipite, romboidi"],"en":["Lat pulldown","If missing: two-dumbbell row with chest on an incline bench","Seated with thighs locked, grip slightly wider than shoulders or neutral. Pull the bar to the chest driving the elbows down and back, torso slightly leaning. Return slowly without jerking.","Latissimus dorsi, biceps, rhomboids"],"kg":["35","42","50"],"q":"lat machine presa neutra esecuzione corretta"},"rem_prono":{"it":["Rematore a due manubri su panca inclinata","Schienale inclinato a 30-45°, petto appoggiato; tira verso i fianchi senza staccare il petto","Inclina lo schienale a 30-45° (circa 2ª-3ª tacca). Sdraiati a pancia in giù con il petto appoggiato e la parte alta oltre il bordo, piedi a terra. Manubri a braccia distese sotto le spalle. Tira i gomiti indietro e in alto verso i fianchi stringendo le scapole. Il petto resta sulla panca. Scendi lento.","Gran dorsale, romboidi, trapezio, deltoide posteriore"],"en":["Incline chest-supported dumbbell row","Backrest at 30-45°, chest supported; pull toward the hips without lifting the chest","Set the backrest to 30-45° (about the 2nd-3rd notch). Lie face down with your chest on the pad and the top of it over the edge, feet on the floor. Dumbbells hanging under the shoulders. Pull the elbows back and up toward the hips, squeezing the shoulder blades. Chest stays on the bench. Lower slowly.","Latissimus dorsi, rhomboids, trapezius, rear deltoid"],"kg":["10","12","14"],"q":"rematore manubri panca inclinata petto appoggiato incline chest supported row"},"pullover":{"it":["Pullover con manubrio sulla panca","Manubrio a due mani, scendi solo finché la schiena resta appoggiata","Sdraiato sulla panca, manubrio tenuto a due mani sopra il petto, gomiti leggermente piegati. Porta il peso dietro la testa in arco, fermati quando la lombare tende a staccarsi. Torna sopra il petto.","Gran dorsale, pettorale, dentato, tricipite"],"en":["Dumbbell pullover on the bench","Dumbbell in both hands, lower only as far as the back stays on the bench","Lie on the bench, dumbbell held with both hands above the chest, elbows slightly bent. Lower the weight in an arc behind the head and stop when the lower back wants to lift. Return above the chest.","Latissimus dorsi, pectorals, serratus, triceps"],"kg":["10","12","14"],"q":"pullover manubrio panca piana esecuzione"},"post_incl":{"it":["Alzate posteriori su panca inclinata","Petto appoggiato, braccia larghe","Petto appoggiato sulla panca inclinata, manubri sotto le spalle. Apri le braccia di lato con gomiti appena piegati fino all'altezza delle spalle, stringendo le scapole. Scendi lento.","Deltoide posteriore, romboidi, trapezio medio"],"en":["Incline rear delt raises","Chest supported, wide arms","Chest on the incline bench, dumbbells hanging under the shoulders. Raise the arms out to the side with slightly bent elbows up to shoulder height, squeezing the shoulder blades. Lower slowly.","Rear deltoid, rhomboids, mid trapezius"],"kg":["4","5","6"],"q":"alzate posteriori petto appoggiato panca inclinata"},"post_prono":{"it":["Alzate posteriori prono sulla panca","Pancia sulla panca piana, braccia larghe, manubri leggeri","A pancia in giù sulla panca piana, manubri sotto le spalle. Apri le braccia di lato con gomiti appena piegati fino all'altezza delle spalle, stringendo le scapole. Scendi lento.","Deltoide posteriore, romboidi, trapezio medio"],"en":["Prone rear delt raises","Face down on the flat bench, wide arms, light dumbbells","Face down on the flat bench, dumbbells hanging under the shoulders. Raise the arms out to the side with slightly bent elbows up to shoulder height, squeezing the shoulder blades. Lower slowly.","Rear deltoid, rhomboids, mid trapezius"],"kg":["3","4","5"],"q":"alzate posteriori prono su panca manubri"},"yraise":{"it":["Alzate a Y su panca inclinata","Pollici in alto; se c'è il cavo: face pull 10→15 kg","Petto sulla panca inclinata, manubri leggeri. Solleva le braccia in avanti e di lato a formare una Y, pollici verso l'alto, fino all'altezza della testa. Tieni 1 secondo, scendi lento.","Trapezio inferiore, deltoide posteriore, cuffia dei rotatori"],"en":["Incline Y raises","Thumbs up; if there is a cable: face pull 10→15 kg","Chest on the incline bench, light dumbbells. Raise the arms forward and out in a Y shape, thumbs up, to head height. Hold 1 second, lower slowly.","Lower trapezius, rear deltoid, rotator cuff"],"kg":["2","3","4"],"q":"Y raise panca inclinata manubri esecuzione"},"curl":{"it":["Curl a martello da seduto","Presa neutra, schiena allo schienale","Seduto, manubri lungo i fianchi con i palmi rivolti verso il corpo. Piega i gomiti portando i manubri alle spalle senza muovere le braccia dal busto. Scendi in 2-3 secondi. Polso sempre dritto.","Bicipite, brachiale, avambraccio"],"en":["Seated hammer curls","Neutral grip, back on the backrest","Seated, dumbbells at your sides with palms facing the body. Bend the elbows bringing the dumbbells to the shoulders without moving the upper arms. Lower in 2-3 seconds. Keep the wrist straight.","Biceps, brachialis, forearm"],"kg":["8","10","12"],"q":"curl a martello manubri seduto esecuzione"},"curl_panca":{"it":["Curl a martello da seduto","Presa neutra, seduto in fondo alla panca","Seduto in fondo alla panca, manubri lungo i fianchi con i palmi rivolti verso il corpo. Piega i gomiti portando i manubri alle spalle senza muovere le braccia dal busto. Scendi in 2-3 secondi. Polso dritto.","Bicipite, brachiale, avambraccio"],"en":["Seated hammer curls","Neutral grip, sitting at the end of the bench","Sitting at the end of the bench, dumbbells at your sides with palms facing the body. Bend the elbows bringing the dumbbells to the shoulders without moving the upper arms. Lower in 2-3 seconds. Wrist straight.","Biceps, brachialis, forearm"],"kg":["8","10","12"],"q":"curl a martello manubri seduto esecuzione"},"ponte":{"it":["Ponte glutei","Senza inarcare la schiena","Supino, ginocchia piegate, piedi a terra vicini ai glutei. Spingi sui talloni e solleva il bacino stringendo i glutei fino ad allineare spalle, anche e ginocchia. Non andare oltre: la lombare non deve inarcarsi. Scendi lento.","Grande gluteo, femorali, core"],"en":["Glute bridge","Without arching the back","On your back, knees bent, feet flat close to the glutes. Drive through the heels and lift the hips squeezing the glutes until shoulders, hips and knees are aligned. Do not go higher: the lower back must not arch. Lower slowly.","Gluteus maximus, hamstrings, core"],"kg":["corpo libero","5 kg sul bacino","10 kg sul bacino"],"q":"ponte glutei a terra esecuzione corretta","core":true},"ponte_man":{"it":["Ponte glutei","Senza inarcare; dalla sett. 2 manubrio sul bacino","Supino, ginocchia piegate, piedi vicini ai glutei, eventuale manubrio appoggiato sul bacino. Spingi sui talloni e solleva il bacino stringendo i glutei fino ad allineare spalle, anche e ginocchia. La lombare non deve inarcarsi. Scendi lento.","Grande gluteo, femorali, core"],"en":["Glute bridge","Without arching; from week 2 a dumbbell on the hips","On your back, knees bent, feet close to the glutes, optional dumbbell resting on the hips. Drive through the heels and lift the hips squeezing the glutes until shoulders, hips and knees are aligned. The lower back must not arch. Lower slowly.","Gluteus maximus, hamstrings, core"],"kg":["corpo libero","8","12"],"q":"ponte glutei a terra esecuzione corretta","core":true},"birddog":{"it":["Bird dog","Tenuta 3\" in estensione","A quattro zampe, mani sotto le spalle e ginocchia sotto le anche. Allunga braccio destro e gamba sinistra fino alla linea del busto, senza inarcare né ruotare il bacino. Tieni 3 secondi, torna e alterna.","Erettori spinali, glutei, addome profondo, spalle"],"en":["Bird dog","3\" hold in extension","On all fours, hands under the shoulders and knees under the hips. Extend the right arm and left leg to torso level without arching or rotating the pelvis. Hold 3 seconds, return and alternate.","Spinal erectors, glutes, deep core, shoulders"],"kg":["corpo libero","corpo libero","corpo libero"],"q":"bird dog esercizio schiena esecuzione","core":true},"boxsquat":{"it":["Squat sulla panca","Siediti e rialzati; dalla sett. 2 manubrio al petto","In piedi davanti alla panca, piedi larghi quanto le spalle. Scendi spingendo il bacino indietro fino a toccare la panca con i glutei, senza lasciarti cadere. Risali spingendo sui talloni, busto dritto.","Quadricipite, glutei, femorali"],"en":["Box squat to the bench","Sit and stand; from week 2 a dumbbell at the chest","Stand in front of the bench, feet shoulder-width apart. Lower by pushing the hips back until the glutes touch the bench, without dropping down. Stand up driving through the heels, torso upright.","Quadriceps, glutes, hamstrings"],"kg":["corpo libero","8","12"],"q":"box squat panca corpo libero esecuzione"},"stepup":{"it":["Step-up su gradino basso","Sali piano, scendi controllato","Un piede sul gradino, spingi su quel tallone per salire senza slancio con la gamba di dietro. Busto dritto, ginocchio in linea con il piede. Scendi lentamente controllando la discesa.","Quadricipite, glutei"],"en":["Step-up on a low step","Go up slowly, come down under control","One foot on the step, drive through that heel to come up without pushing off the back leg. Torso upright, knee in line with the foot. Step down slowly, controlling the descent.","Quadriceps, glutes"],"kg":["corpo libero","corpo libero","2×6 kg"],"q":"step up gradino esecuzione corretta"},"legext":{"it":["Leg extension e leg curl","Se mancano: ponte su una gamba 3×8/lato","Leg extension: schiena appoggiata, distendi le ginocchia senza bloccarle, scendi lento. Leg curl: piega le ginocchia portando i talloni verso i glutei senza sollevare il bacino dal cuscino.","Quadricipite (extension), femorali (curl)"],"en":["Leg extension and leg curl","If missing: single-leg bridge 3×8/side","Leg extension: back supported, extend the knees without locking them, lower slowly. Leg curl: bend the knees bringing the heels toward the glutes without lifting the hips off the pad.","Quadriceps (extension), hamstrings (curl)"],"kg":["20","28","35"],"q":"leg extension leg curl macchina esecuzione"},"affondi":{"it":["Affondi statici con appoggio","Una mano sulla panca, busto dritto; dalla sett. 3 manubrio nell'altra mano","Un piede avanti e uno indietro, una mano appoggiata alla panca. Scendi dritto piegando entrambe le ginocchia, quello dietro verso terra. Risali spingendo sul tallone davanti. Busto verticale.","Quadricipite, glutei, femorali"],"en":["Supported split squat","One hand on the bench, torso upright; from week 3 a dumbbell in the other hand","One foot forward and one back, one hand resting on the bench. Lower straight down bending both knees, the back one toward the floor. Stand up driving through the front heel. Torso vertical.","Quadriceps, glutes, hamstrings"],"kg":["corpo libero","corpo libero","6"],"q":"affondo statico split squat con appoggio esecuzione"},"ponte1":{"it":["Ponte glutei su una gamba","Bacino in linea, senza inarcare","Supino, un piede a terra e l'altra gamba piegata al petto o tesa. Solleva il bacino spingendo sul tallone a terra fino ad allineare spalla, anca e ginocchio. Bacino dritto, non ruotare. Scendi lento.","Grande gluteo, femorali, core"],"en":["Single-leg glute bridge","Hips level, without arching","On your back, one foot flat and the other leg bent to the chest or straight. Lift the hips driving through the grounded heel until shoulder, hip and knee are aligned. Hips level, no rotation. Lower slowly.","Gluteus maximus, hamstrings, core"],"kg":["corpo libero","corpo libero","corpo libero"],"q":"ponte glutei una gamba esecuzione"},"clam":{"it":["Clamshell","Sul fianco, piedi uniti","Sul fianco con ginocchia piegate a 90° e piedi uniti. Tenendo i piedi a contatto, apri il ginocchio superiore verso il soffitto senza ruotare il bacino indietro. Pausa 1 secondo, richiudi lento.","Medio gluteo, rotatori dell'anca"],"en":["Clamshell","On your side, feet together","On your side with knees bent 90° and feet together. Keeping the feet in contact, open the top knee toward the ceiling without rolling the pelvis back. Pause 1 second, close slowly.","Gluteus medius, hip rotators"],"kg":["corpo libero","2 kg sul ginocchio","4 kg sul ginocchio"],"q":"clamshell esercizio glutei corpo libero"},"polpacci":{"it":["Polpacci in piedi con appoggio","Lenti, pausa in alto","In piedi, una mano in appoggio per l'equilibrio. Sali sulle punte il più possibile, pausa 1-2 secondi in alto, scendi lento. Se c'è un gradino, lascia scendere i talloni sotto il livello.","Polpaccio (gastrocnemio, soleo)"],"en":["Standing calf raises with support","Slow, pause at the top","Standing, one hand on a support for balance. Rise onto the toes as high as possible, pause 1-2 seconds at the top, lower slowly. If there is a step, let the heels drop below the edge.","Calves (gastrocnemius, soleus)"],"kg":["corpo libero","corpo libero","10 kg in mano"],"q":"calf raise in piedi esecuzione corretta"},"cardio":{"it":["Cardio leggero","Camminata in salita, cyclette o ellittica a ritmo di conversazione. In alternativa: piscina, camminata in acqua o dorso (no rana)","Scegli una macchina a basso impatto e tieni un ritmo a cui riesci a parlare. Niente corsa. Sul tapis roulant usa la pendenza invece della velocità.","Sistema cardiovascolare, gambe"],"en":["Light cardio","Incline walking, bike or elliptical at a conversational pace. Alternative: pool, water walking or backstroke (no breaststroke)","Pick a low-impact machine and keep a pace at which you can still talk. No running. On the treadmill use incline rather than speed.","Cardiovascular system, legs"],"kg":null,"q":"camminata in salita tapis roulant principianti"},"catcamel":{"it":["Gatto-cammello","Lento, senza forzare","A quattro zampe. Inspira e lascia scendere la pancia inarcando dolcemente la schiena e guardando avanti; espira e arrotonda la schiena verso il soffitto portando il mento al petto. Movimento lento, senza forzare gli estremi.","Mobilità della colonna, erettori spinali, addome"],"en":["Cat-camel","Slow, without forcing","On all fours. Inhale and let the belly drop, gently arching the back and looking forward; exhale and round the back toward the ceiling bringing the chin to the chest. Slow movement, do not force the end ranges.","Spine mobility, spinal erectors, abs"],"kg":null,"q":"gatto cammello cat camel esercizio schiena","core":true},"st_anca":{"it":["Allungamento flessori dell'anca","In affondo, bacino in avanti","In ginocchio su una gamba, l'altra avanti con il piede a terra. Stringi il gluteo della gamba dietro e porta il bacino leggermente in avanti finché senti tirare davanti all'anca. Busto dritto, non inarcare.","Ileopsoas, retto femorale"],"en":["Hip flexor stretch","In a lunge, hips forward","Kneel on one leg, the other forward with the foot flat. Squeeze the glute of the back leg and shift the hips slightly forward until you feel a stretch in front of the hip. Torso upright, no arching.","Iliopsoas, rectus femoris"],"kg":null,"q":"allungamento flessori anca in affondo"},"st_gluteo":{"it":["Allungamento gluteo a \"4\"","Da supino; niente allungamenti forzati dei femorali","Supino, caviglia destra sul ginocchio sinistro. Afferra la coscia sinistra e avvicinala al petto finché senti tirare il gluteo destro. Testa e schiena restano a terra. Cambia lato.","Grande gluteo, piriforme"],"en":["Figure-4 glute stretch","Lying on your back; no forced hamstring stretches","On your back, right ankle on the left knee. Hold the left thigh and bring it toward the chest until you feel a stretch in the right glute. Head and back stay on the floor. Switch sides.","Gluteus maximus, piriformis"],"kg":null,"q":"allungamento gluteo figura 4 supino"},"st_petto":{"it":["Allungamento petto al muro","Braccio a 90°, ruota il busto piano","Avambraccio appoggiato al muro o allo stipite con il gomito all'altezza della spalla. Ruota lentamente il busto dal lato opposto finché senti tirare il petto. Spalla bassa, niente dolore.","Pettorale, deltoide anteriore"],"en":["Chest stretch on the wall","Arm at 90°, rotate the torso slowly","Forearm on the wall or door frame with the elbow at shoulder height. Slowly rotate the torso away until you feel a stretch in the chest. Shoulder down, no pain.","Pectorals, front deltoid"],"kg":null,"q":"allungamento pettorali al muro"}};
+const DAYSET={"full":{"A":[["panca","3×10"],["croci","3×12"],["spinte","3×10"],["laterali","3×12"],["squeeze","3×12"],["kickback_cavo","3×12/L"]],"B":[["rematore","3×10/L"],["lat","3×12"],["post_incl","3×12"],["yraise","3×12"],["curl","3×10"],["ponte","3×12"],["birddog","3×8/L"]],"C":[["boxsquat","3×10"],["stepup","3×8/L"],["legext","3×12"],["clam","3×15/L"],["polpacci","3×15"]]},"bil":{"A":[["panca","3×10"],["croci","3×12"],["spinte_muro","3×10"],["laterali","3×12"],["squeeze","3×12"],["kickback","3×12/L"]],"B":[["rematore","3×10/L"],["rem_prono","3×10"],["pullover","3×12"],["post_prono","3×12"],["curl_panca","3×10"],["ponte_man","3×12"],["birddog","3×8/L"]],"C":[["boxsquat","3×10"],["affondi","3×8/L"],["ponte1","3×8/L"],["clam","3×15/L"],["polpacci","3×15"]]}};
+const DAYD=[["cardio","25–35'"],["catcamel","2×8"],["birddog","2×6/L"],["ponte","2×10"],["st_anca","30\"/L"],["st_gluteo","30\"/L"],["st_petto","30\"/L"]];
+const ABS={A:[["deadbug","3×8/L"],["plank_lat","3×20\"/L"]],B:[["plank","3×20–30\""],["mcgill","3×6"]],C:[["deadbug","3×8/L"],["plank_lat","3×20\"/L"]],D:[["plank","2×20–30\""],["mcgill","2×6"]]};
+const T={"it":{"title":"Allenamento","week":"Settimana","today":"OGGI","dayNames":{"A":"Spinta","B":"Tirata","C":"Gambe","D":"Recupero"},"dayFull":{"A":"Spinta","B":"Tirata","C":"Gambe","D":"Recupero attivo"},"daySub":{"A":"Petto, spalle, tricipiti + addominali","B":"Dorso, bicipiti, glutei + addominali","C":"Gambe a basso impatto + addominali","D":"Cardio leggero, posturali, allungamenti"},"sets4":"4 serie per esercizio, 3 per gli addominali","fix":"Peso fisso","up":"Peso crescente","bil":"Manubri e panca","full":"Palestra completa","note":"Versione per palestra con manubri, panca piana e macchine cardio (fino al 31/10). Pesi per manubrio.","warmT":"Riscaldamento · 15'","warmS":"Da fare ogni giorno prima degli esercizi","warm":[["10' di cardio leggero: cyclette, ellittica o camminata in salita sul tapis roulant",[["Cyclette","cyclette riscaldamento principianti"],["Ellittica","ellittica come usarla correttamente"],["Tapis","camminata in salita tapis roulant principianti"]]],["Gatto-cammello lento ×8",[["Video","gatto cammello cat camel esercizio schiena"]]],["Bird dog ×5 per lato",[["Video","bird dog esercizio schiena esecuzione"]]],["Ponte glutei ×10",[["Video","ponte glutei a terra esecuzione corretta"]]]],"cool":"A fine allenamento: 5' di camminata lenta","video":"Video","howto":"Come si esegue","muscles":"Muscoli","core":"Core e postura","abs":"Addominali · ogni giorno","setsDone":"Serie fatte","set":"Serie","setW":"Peso serie","sug":"Suggeriti","sugNote":"scrivi sotto ogni serie il peso usato","last":"ultima volta","bw":"Corpo libero","side":"/lato","reset":"Azzera le spunte di oggi","logT":"Registro allenamenti","logEmpty":"Nessuna seduta registrata. Le spunte e i pesi di ogni allenamento compaiono qui.","serie":"serie","bilShort":"manubri e panca","stop":"<b>Fermati subito</b> se senti dolore che scende lungo la gamba, formicolio o intorpidimento, o perdita di forza. Poi senti il Dott. Somma o un fisioterapista.","rulesT":"Regole per schiena e polsi","rules":["Niente salti né impatti.","Spalle sempre da seduto con schienale, mai carichi sopra la testa in piedi.","Niente flessioni o rotazioni del busto sotto carico.","Col bilanciere mai: squat con bilanciere sulle spalle, stacco, rematore in piedi piegato, lento in piedi, good morning.","Schiena neutra, addome attivo, espira nello sforzo.","Polsi: presa neutra, polso dritto, alleggerisci se formicolano le dita.","Recupero 60–90\" tra le serie. Sali di peso solo se il giorno dopo la schiena è come prima."],"footer":"Rotazione A → B → C → D dal 28/10/2026: il giorno proposto è il successivo all'ultima seduta registrata. 4 serie per esercizio, carichi bassi nella settimana 1. I pesi che scrivi restano salvati su questo telefono. Basata su RMN 08/08/2026, EMG 27/11/2025 e visita Dott. Somma 27/08/2026; non sostituisce il parere medico.","rest":"Recupero","go":"Vai con la prossima serie","work":"Esercizio","workDone":"Tempo! Spunta la serie","end":"Fine","snd":"Suono di fine recupero","unitL":"Unità di peso","langL":"Lingua","pickDay":"Scegli il giorno","equip":"Attrezzi della palestra","pw":"Peso nelle serie","locale":"it-IT"},"en":{"title":"Workout","week":"Week","today":"TODAY","dayNames":{"A":"Push","B":"Pull","C":"Legs","D":"Recovery"},"dayFull":{"A":"Push","B":"Pull","C":"Legs","D":"Active recovery"},"daySub":{"A":"Chest, shoulders, triceps + abs","B":"Back, biceps, glutes + abs","C":"Low-impact legs + abs","D":"Light cardio, posture work, stretching"},"sets4":"4 sets per exercise, 3 for abs","fix":"Fixed weight","up":"Increasing weight","bil":"Dumbbells and bench","full":"Full gym","note":"Version for a gym with dumbbells, flat bench and cardio machines (until 31/10). Weights per dumbbell.","warmT":"Warm-up · 15'","warmS":"Every day, before the exercises","warm":[["10' of light cardio: bike, elliptical or incline walking on the treadmill",[["Bike","stationary bike warm up beginners"],["Elliptical","how to use elliptical correctly"],["Treadmill","incline walking treadmill beginners"]]],["Slow cat-camel ×8",[["Video","cat camel exercise back"]]],["Bird dog ×5 per side",[["Video","bird dog exercise form"]]],["Glute bridge ×10",[["Video","glute bridge proper form"]]]],"cool":"After the workout: 5' of slow walking","video":"Video","howto":"How to do it","muscles":"Muscles","core":"Core and posture","abs":"Abs · every day","setsDone":"Sets done","set":"Set","setW":"Set weight","sug":"Suggested","sugNote":"write the weight used under each set","last":"last time","bw":"Bodyweight","side":"/side","reset":"Clear today's ticks","logT":"Training log","logEmpty":"No session recorded yet. Ticks and weights of each workout show up here.","serie":"sets","bilShort":"dumbbells and bench","stop":"<b>Stop immediately</b> if you feel pain running down the leg, tingling or numbness, or loss of strength. Then contact Dr. Somma or a physiotherapist.","rulesT":"Rules for back and wrists","rules":["No jumps or impacts.","Shoulders always seated with a backrest, never loads overhead while standing.","No bending or twisting of the torso under load.","Never with a barbell: back squat, deadlift, bent-over row, standing press, good morning.","Neutral spine, abs braced, exhale on the effort.","Wrists: neutral grip, straight wrist, lighten the load if your fingers tingle.","Rest 60–90\" between sets. Add weight only if your back feels the same the next day."],"footer":"Rotation A → B → C → D from 28/10/2026: the proposed day is the one after the last recorded session. 4 sets per exercise, low loads in week 1. The weights you enter stay on this phone. Based on lumbar MRI 08/08/2026, EMG 27/11/2025 and Dr. Somma visit 27/08/2026; not a substitute for medical advice.","rest":"Rest","go":"Go for the next set","work":"Exercise","workDone":"Time! Tick the set","end":"Done","snd":"End-of-rest sound","unitL":"Weight unit","langL":"Language","pickDay":"Choose the day","equip":"Gym equipment","pw":"Weight across sets","locale":"en-GB"}};
+const store={get(k,d){try{const v=localStorage.getItem(k);return v===null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+let lang=store.get('lang','it');const t=()=>Object.assign({sideN:n=>(lang==='it'?'lato ':'side ')+n},T[lang]);
+const Q=s=>/^https?:/.test(s)?s:'https://www.youtube.com/results?search_query='+encodeURIComponent(s);
+const COLORS={A:'var(--a)',B:'var(--b)',C:'var(--c)',D:'var(--d)'};
+const START=new Date(2026,9,28);
+const BIL_END=new Date(2026,10,1);
+const localKey=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+function todayInfo(){const now=new Date(Date.now()-4*3600*1000);const d0=new Date(now.getFullYear(),now.getMonth(),now.getDate());const n=Math.max(0,Math.floor((d0-START)/86400000));return{day:'ABCD'[n%4],week:Math.min(3,Math.floor(n/7)+1),n}}
+const info=todayInfo();
+const todayKey=localKey(new Date(Date.now()-4*3600*1000)); // la giornata di allenamento cambia alle 4 del mattino
+const LOG=store.get('log',{});
+(function(){const ds=Object.keys(LOG).filter(k=>LOG[k]&&LOG[k].done).sort();if(!ds.length)return;const lastD=ds[ds.length-1];if(LOG[todayKey]&&LOG[todayKey].done){info.day=LOG[todayKey].day;return}info.day='ABCD'[('ABCD'.indexOf(LOG[lastD].day)+1)%4]})();
+let cur=store.get('lastDayPick',null);if(!cur||cur.date!==todayKey)cur={date:todayKey,day:info.day};
+if(!cur.mode)cur.mode=new Date()<BIL_END?'bil':'full';
+const P=()=>cur.mode==='bil'?'m':'';
+const vidIcon='<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9-5.5z" fill="currentColor"/></svg>';
+let unit=store.get('unit','kg');
+let pmode=store.get('pmode','up');
+const RAMP=[0.7,0.85,1,1];
+const rnd1=v=>Math.max(1,unit==='lb'?Math.round(v/2.5)*2.5:Math.round(v));
+const LB=2.20462;
+const num=x=>parseFloat(String(x).replace(',','.'));
+const conv=(v,from)=>{if(from===unit)return v;return from==='kg'?v*LB:v/LB};
+const rnd=v=>unit==='lb'?Math.round(v/2.5)*2.5:Math.round(v*2)/2;
+const dec=s=>lang==='it'?String(s).replace('.',','):String(s);
+const fmtN=v=>dec(rnd(v));
+const CL='corpo libero';
+function fmtSug(x){x=String(x);if(/^\d+([.,]\d+)?$/.test(x))return fmtN(conv(num(x),'kg'))+' '+unit;if(x.includes('×'))return x.replace(' kg',' '+unit);
+ const m=x.match(/^(\d+([.,]\d+)?)( kg)? (.*)$/);if(!m)return x;const rest=lang==='en'?({'sul bacino':'on the hips','sul ginocchio':'on the knee','in mano':'in hand'}[m[4]]||m[4]):m[4];return fmtN(conv(num(m[1]),'kg'))+' '+unit+' '+rest}
+const repsT=r=>r.replace('/L',t().side);
+function durOf(reps){const m=reps.match(/(\d+)(?:–(\d+))?(["'])/);if(!m)return null;const v=+(m[2]||m[1]);return{sec:m[3]=='"'?v:v*60,sides:/\/L/.test(reps),label:v+m[3]}}
+const clockIcon='<svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 4.5V8l2.5 1.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>';
+function exList(day){const base=day==='D'?DAYD:DAYSET[cur.mode][day];const abs=(ABS[day]||[]).map(([s,r])=>[s,r,true]);return base.concat(abs)}
+function setsFor(reps,day,isAbs){const m=reps.match(/^(\d)×/);if(!m)return 1;return day==='D'||isAbs?+m[1]:4}
+function applyStatic(){const L=t();document.documentElement.lang=lang;document.getElementById('h1').textContent=L.title;
+ document.getElementById('meta').textContent=L.week+' '+info.week+' · '+new Date().toLocaleDateString(L.locale,{weekday:'short',day:'numeric',month:'numeric'});
+ document.getElementById('langG').setAttribute('aria-label',L.langL);document.getElementById('unitG').setAttribute('aria-label',L.unitL);document.getElementById('daysG').setAttribute('aria-label',L.pickDay);document.getElementById('pwG').setAttribute('aria-label',L.pw);document.getElementById('eqG').setAttribute('aria-label',L.equip);
+ document.querySelectorAll('.day').forEach(b=>b.querySelector('small').textContent=L.dayNames[b.dataset.day]);
+ document.querySelectorAll('.pbtn').forEach(b=>b.textContent=L[b.dataset.p]);
+ document.querySelectorAll('.mbtn').forEach(b=>b.textContent=L[b.dataset.mode]);
+ document.getElementById('warm').innerHTML='<h2>'+L.warmT+'</h2><p>'+L.warmS+'</p>'+L.warm.map(([txt,links],i)=>'<div class="wrow"><div class="wtxt">'+txt+'</div><div class="wlinks">'+(i===0?'<button type="button" class="vid tmr" data-sec="600" data-sides="0" data-name="'+L.warmT.split(' ·')[0]+'">'+clockIcon+'10\'</button>':'')+links.map(([lab,q])=>'<a class="vid" href="'+Q(q)+'" target="_blank" rel="noopener">'+vidIcon+lab+'</a>').join('')+'</div></div>').join('')+'<div class="wrow"><div class="wtxt" style="color:var(--muted);font-weight:500">'+L.cool+'</div></div>';
+ document.getElementById('reset').textContent=L.reset;document.getElementById('logT').textContent=L.logT;document.getElementById('stop').innerHTML=L.stop;
+ document.getElementById('rulesT').textContent=L.rulesT;document.getElementById('rules').innerHTML=L.rules.map(r=>'<li>'+r+'</li>').join('');document.getElementById('foot').textContent=L.footer;
+ document.getElementById('skip').textContent=L.end;document.getElementById('snd').setAttribute('aria-label',L.snd);
+ document.querySelectorAll('.lbtn').forEach(b=>b.setAttribute('aria-pressed',b.dataset.l===lang?'true':'false'))}
+function render(){const L=t();applyStatic();
+ document.querySelectorAll('.pbtn').forEach(b=>b.setAttribute('aria-pressed',b.dataset.p===pmode?'true':'false'));
+ document.querySelectorAll('.ubtn:not(.lbtn)').forEach(b=>b.setAttribute('aria-pressed',b.dataset.u===unit?'true':'false'));
+ document.querySelectorAll('.mbtn').forEach(b=>b.setAttribute('aria-pressed',b.dataset.mode===cur.mode?'true':'false'));
+ const day=cur.day;
+ document.querySelectorAll('.day').forEach(b=>{b.setAttribute('aria-pressed',b.dataset.day===day?'true':'false');
+  const o=b.querySelector('.today');if(o)o.remove();if(b.dataset.day===info.day){const s=document.createElement('span');s.className='today';s.textContent=L.today;b.appendChild(s)}});
+ const intro=document.getElementById('intro');intro.style.setProperty('--k',COLORS[day]);
+ intro.innerHTML='<h2>'+day+' · '+L.dayFull[day]+'</h2><p>'+L.daySub[day]+(day!=='D'?' · '+L.sets4:'')+'</p>'+(cur.mode==='bil'&&day!=='D'?'<div class="note">'+L.note+'</div>':'');
+ const done=store.get('done-'+todayKey+'-'+P()+day,{});
+ const kgs=store.get('kg',{});
+ const list=document.getElementById('list');list.innerHTML='';
+ exList(day).forEach(([slug,reps,isAbs],i)=>{
+  const E=EX[slug];const [name,how,desc,mus]=E[lang];const kg=day==='D'?null:E.kg;const q=E.q;const core=isAbs?L.abs:(E.core?L.core:'');
+  const id=(day==='D'?'':P())+day+i;const n=setsFor(reps,day,isAbs);
+  const card=document.createElement('article');card.className='ex';card.style.setProperty('--k',COLORS[day]);
+  let reps2=repsT(reps);if(/^\d×/.test(reps))reps2=reps2.replace(/^\d/,String(n));
+  let h='<div class="exhead"><div class="exname">'+(core?'<div class="tag">'+core+'</div>':'')+name+'<div class="tag" style="color:var(--muted)">'+reps2+'</div></div><div class="btns"><a class="vid" href="'+Q(q)+'" target="_blank" rel="noopener">'+vidIcon+L.video+'</a>'+(durOf(reps)?'<button type="button" class="vid tmr" data-sec="'+durOf(reps).sec+'" data-sides="'+(durOf(reps).sides?1:0)+'" data-name="'+name.replace(/"/g,'&quot;')+'">'+clockIcon+durOf(reps).label+'</button>':'')+'</div></div><p class="how">'+how+'</p>';
+  h+='<div class="musline">'+mus.split(/,\s*/).map((m,mi)=>{const rs=regsOfStr(m);const pr=(PRIM[slug]||[0]).includes(mi);const nm=(x=>x.charAt(0).toUpperCase()+x.slice(1))(m.replace(/[()]/g,''));return '<button type="button" class="mchip'+(pr?' pri':'')+'" data-rs="'+rs.join(',')+'" data-nm="'+nm.replace(/"/g,'&quot;')+'" aria-pressed="false"'+(rs.length?'':' disabled')+'>'+nm+'</button>'}).join('')+(regsOf(slug).length?'<button type="button" class="bodyb" data-slug="'+slug+'" aria-pressed="false">'+MT[lang].onBody+'</button>':'')+'<span class="mleg2">★ '+MT[lang].prim+'</span></div><div class="cmap" hidden></div>';
+  h+='<details class="exd"><summary>'+L.howto+'</summary><p class="desc">'+desc+'</p></details>';
+  h+='<div class="row" role="group" aria-label="'+L.setsDone+'">';
+  const ds=done[id]||[];
+  const weighted=kg&&kg.some(x=>x!==CL);
+  const sug0=kg?kg[info.week-1]:null;const sn=sug0&&/^\d+([.,]\d+)?$/.test(sug0)?conv(num(sug0),'kg'):null;const ramp=pmode==='up'&&sn&&n===4&&day!=='D';
+  const sw=s=>dec(rnd1(sn*(ramp?RAMP[s]:1)));
+  const last=weighted?kgs[id]:null;const lastSets=last?(last.sets||[last.v]):[];
+  const lv=s=>{const x=lastSets[s]??(last&&!last.sets?last.v:undefined);return x?fmtN(conv(num(x),last.u||'kg')):''};
+  for(let s=0;s<n;s++){
+   h+='<div class="sc"><button type="button" class="set" data-id="'+id+'" data-s="'+s+'" aria-pressed="'+(ds[s]?'true':'false')+'" aria-label="'+L.set+' '+(s+1)+'">'+(s+1)+'</button>';
+   if(weighted)h+='<input class="w" id="kg-'+id+'-'+s+'" inputmode="decimal" data-id="'+id+'" data-s="'+s+'" value="'+lv(s)+'" placeholder="'+(sn?sw(s):unit)+'" aria-label="'+L.setW+' '+(s+1)+' ('+unit+')">';
+   h+='</div>';
+  }
+  h+='</div>';
+  card.dataset.name=name;
+  if(weighted){
+   h+='<div class="kg"><span class="sugg">'+L.sug+': <b>'+(sn?(ramp?sw(0)+' → '+sw(3):sw(0))+' '+unit:fmtSug(sug0))+'</b> · '+L.sugNote+' ('+unit+')</span>'+(last?'<span>'+L.last+': '+[...Array(n)].map((_,s)=>lv(s)||'–').join(' · ')+' '+unit+' ('+last.d.slice(8,10)+'/'+last.d.slice(5,7)+')</span>':'')+'</div>';
+  } else if(kg){h+='<div class="kg"><span class="sugg">'+L.bw+'</span></div>'}
+  card.innerHTML=h;if(ds.length&&ds.filter(Boolean).length>=n)card.classList.add('complete');list.appendChild(card);
+ });
+ store.set('lastDayPick',cur);renderMap();renderData();renderLog()}
+document.querySelectorAll('.lbtn').forEach(b=>b.addEventListener('click',()=>{lang=b.dataset.l;store.set('lang',lang);render()}));
+document.querySelectorAll('.pbtn').forEach(b=>b.addEventListener('click',()=>{pmode=b.dataset.p;store.set('pmode',pmode);render()}));
+document.querySelectorAll('.ubtn:not(.lbtn)').forEach(b=>b.addEventListener('click',()=>{unit=b.dataset.u;store.set('unit',unit);render()}));
+document.querySelectorAll('.day').forEach(b=>b.addEventListener('click',()=>{cur={date:todayKey,day:b.dataset.day,mode:cur.mode};render();window.scrollTo({top:0})}));
+document.querySelectorAll('.mbtn').forEach(b=>b.addEventListener('click',()=>{cur.mode=b.dataset.mode;render()}));
+document.addEventListener('click',ev=>{const b=ev.target.closest('.tmr');if(!b)return;const sec=+b.dataset.sec;const sides=b.dataset.sides==='1';const nm=b.dataset.name;
+ startTimer(sec,nm+(sides?' · '+t().sideN(1):''),sides?{sec,label:nm+' · '+t().sideN(2)}:null,true)});
+document.getElementById('list').addEventListener('click',ev=>{
+ const b=ev.target.closest('.set');if(!b)return;const key='done-'+todayKey+'-'+P()+cur.day;const done=store.get(key,{});
+ const arr=done[b.dataset.id]||[];const s=+b.dataset.s;arr[s]=!arr[s];done[b.dataset.id]=arr;store.set(key,done);
+ b.setAttribute('aria-pressed',arr[s]?'true':'false');
+ logSession();
+ const card=b.closest('.ex');const n=card.querySelectorAll('.set').length;card.classList.toggle('complete',arr.filter(Boolean).length>=n);
+ if(arr[s]&&cur.day!=='D')startTimer(75,card.dataset.name);
+});
+document.getElementById('list').addEventListener('change',ev=>{const inp=ev.target.closest('input.w');if(!inp)return;const kgs=store.get('kg',{});const id=inp.dataset.id;
+ const card=inp.closest('.ex');const vals=[...card.querySelectorAll('input.w')].map(i=>i.value.trim().replace(',','.'));
+ if(vals.some(Boolean)){const prev=kgs[id]||{};const same=prev.u===unit||!prev.u;kgs[id]={sets:vals.map((v,s)=>v||(same&&prev.sets?prev.sets[s]:'')||''),u:unit,d:todayKey}}else delete kgs[id];store.set('kg',kgs);logSession()});
+function logSession(){const day=cur.day;const done=store.get('done-'+todayKey+'-'+P()+day,{});const kgs=store.get('kg',{});const ex=[];let any=false;
+ exList(day).forEach(([slug,reps,isAbs],i)=>{const id=(day==='D'?'':P())+day+i;const ds=(done[id]||[]).map(Boolean);const k=kgs[id];const w=k&&k.d===todayKey?(k.sets||[k.v]):[];
+  if(ds.some(Boolean)||w.some(Boolean)){any=true;ex.push({slug,sets:ds.filter(Boolean).length,tot:setsFor(reps,day,isAbs),w:w.map(x=>x||''),u:k?k.u:unit})}});
+ if(any){LOG[todayKey]={day,mode:cur.mode,done:true,ex}}else delete LOG[todayKey];store.set('log',LOG);renderLog()}
+function renderLog(){const L=t();const el=document.getElementById('log');const ks=Object.keys(LOG).filter(k=>LOG[k]&&LOG[k].done).sort().reverse();
+ if(!ks.length){el.innerHTML='<p class="how">'+L.logEmpty+'</p>';return}
+ el.innerHTML=ks.map(k=>{const G=LOG[k];const d=new Date(k+'T12:00:00');
+  return '<div class="lg"><div class="lgh"><span class="lgd" style="background:'+COLORS[G.day]+'">'+G.day+'</span><b>'+d.toLocaleDateString(L.locale,{weekday:'short',day:'numeric',month:'numeric'})+'</b><span class="how" style="margin:0">'+L.dayFull[G.day]+(G.mode==='bil'?' · '+L.bilShort:'')+'</span></div>'+
+  G.ex.map(x=>'<div class="lgr"><span>'+(x.slug&&EX[x.slug]?EX[x.slug][lang][0]:x.n)+'</span><span class="lgv">'+x.sets+'/'+x.tot+' '+L.serie+(x.w.some(Boolean)?' · '+x.w.map(v=>v?dec(v):'–').join(' · ')+' '+(x.u||'kg'):'')+'</span></div>').join('')+'</div>'}).join('')}
+document.getElementById('reset').addEventListener('click',()=>{store.set('done-'+todayKey+'-'+P()+cur.day,{});render();logSession()});
+let tId=null,tEnd=0,tTot=0,tDone=false;const TM=document.getElementById('timer');
+let sound=store.get('sound',true);let AC=null;let wl=null;
+function ac(){try{if(!AC){const C=window.AudioContext||window.webkitAudioContext;if(!C)return null;AC=new C()}if(AC.state==='suspended')AC.resume();return AC}catch(e){return null}}
+function chime(){if(!sound)return;const a=ac();if(!a)return;const t0=a.currentTime;const notes=[[659.25,0],[880,0.18],[1046.5,0.36],[880,0.9],[1046.5,1.08],[1318.5,1.26]];
+ notes.forEach(([f,dt])=>{const o=a.createOscillator();const g=a.createGain();o.type='sine';o.frequency.value=f;o.connect(g);g.connect(a.destination);
+  const tt=t0+dt;g.gain.setValueAtTime(0.0001,tt);g.gain.exponentialRampToValueAtTime(0.25,tt+0.02);g.gain.exponentialRampToValueAtTime(0.0001,tt+0.5);o.start(tt);o.stop(tt+0.55)})}
+const sndBtn=document.getElementById('snd');sndBtn.setAttribute('aria-pressed',sound?'true':'false');
+sndBtn.addEventListener('click',()=>{sound=!sound;store.set('sound',sound);sndBtn.setAttribute('aria-pressed',sound?'true':'false');if(sound)chime()});
+async function wakeOn(){try{if('wakeLock' in navigator&&!wl){wl=await navigator.wakeLock.request('screen');wl.addEventListener('release',()=>{wl=null})}}catch(e){}}
+function wakeOff(){try{if(wl){wl.release();wl=null}}catch(e){}}
+let tNext=null,tWork=false,tLbl='';
+function saveT(){store.set('timer',{end:tEnd,tot:tTot,label:tLbl,work:tWork,next:tNext})}
+function startTimer(sec,label,next,work,end){if(!end)ac();wakeOn();tTot=sec;tEnd=end||Date.now()+sec*1000;tDone=false;tNext=next||null;tWork=!!work;tLbl=label;document.getElementById('tl').textContent=(work?t().work:t().rest)+' · '+label;TM.classList.toggle('work',tWork);TM.hidden=false;saveT();clearInterval(tId);tick();tId=setInterval(tick,250)}
+function fmtT(s){return s>=60?Math.floor(s/60)+':'+String(s%60).padStart(2,'0'):String(s)}
+function tick(){const left=Math.max(0,Math.ceil((tEnd-Date.now())/1000));document.getElementById('tt').textContent=fmtT(left);document.getElementById('bar').style.width=(left/tTot*100)+'%';
+ if(left<=0&&!tDone){tDone=true;clearInterval(tId);if(!tNext)store.set('timer',null);document.getElementById('tl').textContent=tWork?t().workDone:t().go;chime();try{navigator.vibrate&&navigator.vibrate(300)}catch(e){}
+  if(tNext){const nx=tNext;tNext=null;setTimeout(()=>startTimer(nx.sec,nx.label,null,true),3000)}}}
+document.addEventListener('visibilitychange',()=>{if(!document.hidden){if(!TM.hidden&&!tDone)tick();if(!TM.hidden)wakeOn()}});
+document.getElementById('plus').addEventListener('click',()=>{if(tDone){tDone=false;tTot=15;tEnd=Date.now()+15000;clearInterval(tId);tId=setInterval(tick,250)}else{tEnd+=15000;tTot=Math.max(tTot,Math.ceil((tEnd-Date.now())/1000))}saveT();tick()});
+document.getElementById('skip').addEventListener('click',()=>{clearInterval(tId);TM.hidden=true;tNext=null;store.set('timer',null);wakeOff()});
+(function(){const sv=store.get('timer',null);if(!sv||!sv.end)return;const now=Date.now();
+ if(sv.end>now){startTimer(sv.tot,sv.label,sv.next,sv.work,sv.end);return}
+ if(sv.next){const ne=sv.end+3000+sv.next.sec*1000;if(ne>now){startTimer(sv.next.sec,sv.next.label,null,true,ne);return}}
+ store.set('timer',null)})();
+
+const DT={it:{t:'Dati: esporta e importa',p:'Per portare storico, pesi e impostazioni su un altro dispositivo o nell\'app: tocca Esporta, copia il codice e incollalo in Importa dall\'altra parte.',exp:'Esporta',copy:'Copia',share:'Condividi',copied:'Copiato',imp:'Importa',ph:'Incolla qui il codice esportato',ok:'Dati importati',bad:'Codice non valido',conf:'I dati attuali verranno sostituiti. Continuare?',none:'Nessun dato da esportare'},
+en:{t:'Data: export and import',p:'To move history, weights and settings to another device or to the app: tap Export, copy the code and paste it into Import on the other side.',exp:'Export',copy:'Copy',share:'Share',copied:'Copied',imp:'Import',ph:'Paste the exported code here',ok:'Data imported',bad:'Invalid code',conf:'Current data will be replaced. Continue?',none:'No data to export'}};
+function dumpData(){const o={};try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);o[k]=localStorage.getItem(k)}}catch(e){}return o}
+function renderData(){const D=DT[lang];document.getElementById('dataT').textContent=D.t;
+ document.getElementById('dataC').innerHTML='<p>'+D.p+'</p><div class="dbtns"><button type="button" id="dExp">'+D.exp+'</button></div><textarea id="dOut" readonly hidden aria-label="'+D.exp+'"></textarea><div class="dbtns" id="dOutB" hidden><button type="button" id="dCopy">'+D.copy+'</button>'+(navigator.share?'<button type="button" id="dShare">'+D.share+'</button>':'')+'</div><textarea id="dIn" placeholder="'+D.ph+'" aria-label="'+D.imp+'"></textarea><div class="dbtns"><button type="button" id="dImp">'+D.imp+'</button></div><div class="dmsg" id="dMsg" aria-live="polite"></div>'}
+document.getElementById('dataBox').addEventListener('click',async ev=>{const D=DT[lang];const msg=t=>{document.getElementById('dMsg').textContent=t};const id=ev.target.id;
+ if(id==='dExp'){const d=dumpData();if(!Object.keys(d).length){msg(D.none);return}const out=document.getElementById('dOut');out.value=JSON.stringify({app:'allenamento',v:1,at:new Date().toISOString(),data:d});out.hidden=false;document.getElementById('dOutB').hidden=false;msg('')}
+ else if(id==='dCopy'){const out=document.getElementById('dOut');let ok=false;try{await navigator.clipboard.writeText(out.value);ok=true}catch(e){}if(!ok){try{out.focus();out.select();ok=document.execCommand('copy')}catch(e){}}msg(ok?D.copied:'');if(!ok){out.focus();out.select()}}
+ else if(id==='dShare'){try{await navigator.share({text:document.getElementById('dOut').value})}catch(e){}}
+ else if(id==='dImp'){let o=null;try{o=JSON.parse(document.getElementById('dIn').value.trim())}catch(e){}
+  if(!o||o.app!=='allenamento'||!o.data||typeof o.data!=='object'){msg(D.bad);return}
+  if(!confirm(D.conf))return;try{localStorage.clear();Object.entries(o.data).forEach(([k,v])=>{if(typeof v==='string')localStorage.setItem(k,v)})}catch(e){msg(D.bad);return}
+  msg(D.ok);setTimeout(()=>location.reload(),600)}});
+
+const MT={it:{title:'Mappa dei muscoli',sub:'Colorati i muscoli allenati oggi: pieno = muscolo principale di almeno un esercizio, chiaro = solo secondario. Tocca un muscolo o un nome per vedere quali esercizi lo lavorano.',front:'Fronte',back:'Retro',fsub:'visto di fronte',bsub:'visto da dietro',close:'Chiudi',all:'Tutti i muscoli di oggi',onBody:'Vedi sul corpo',prim:'= muscolo principale · sul corpo: pieno = principale, chiaro = secondario',none:'Nessun esercizio di oggi lo lavora',ex:'Esercizio',worked:'Lavorato da'},
+en:{title:'Muscle map',sub:'Muscles trained today are coloured: solid = main muscle of at least one exercise, light = secondary only. Tap a muscle or a name to see which exercises work it.',front:'Front',back:'Back',fsub:'seen from the front',bsub:'seen from behind',close:'Close',all:'All of today\'s muscles',onBody:'Show on body',prim:'= main muscle · on the body: solid = main, light = secondary',none:'No exercise today works it',ex:'Exercise',worked:'Worked by'}};
+const REG={pett:['Pettorale','Pectorals'],deltA:['Deltoide anteriore','Front deltoid'],deltL:['Deltoide laterale','Lateral deltoid'],deltP:['Deltoide posteriore','Rear deltoid'],
+bic:['Bicipite e brachiale','Biceps & brachialis'],tric:['Tricipite','Triceps'],avam:['Avambraccio','Forearm'],abs:['Retto addominale e trasverso','Rectus abdominis & transversus'],obl:['Obliqui','Obliques'],dent:['Dentato anteriore','Serratus anterior'],
+trap:['Trapezio','Trapezius'],romb:['Romboidi','Rhomboids'],cuff:['Cuffia dei rotatori','Rotator cuff'],lat:['Gran dorsale','Latissimus dorsi'],lomb:['Erettori spinali e lombari','Spinal erectors & lower back'],
+glut:['Grande gluteo','Gluteus maximus'],glmed:['Medio gluteo e rotatori anca','Gluteus medius & hip rotators'],flex:["Flessori dell'anca (ileopsoas)",'Hip flexors (iliopsoas)'],quad:['Quadricipite','Quadriceps'],fem:['Femorali','Hamstrings'],polp:['Polpaccio','Calves']};
+const KW=[[/deltoide anteriore|front deltoid/,['deltA']],[/deltoide laterale|lateral deltoid/,['deltL']],[/deltoide posteriore|rear deltoid/,['deltP']],[/^deltoid|^spall|^shoulder/,['deltA','deltL','deltP']],
+[/pettoral|pectoral/,['pett']],[/bicip|bicep|brachial/,['bic']],[/tricip|tricep/,['tric']],[/avambracc|forearm/,['avam']],[/obliq/,['obl']],[/dentato|serratus/,['dent']],
+[/retto femorale|rectus femoris|ileopsoas|iliopsoas|flessori|hip flexor/,['flex']],[/retto addom|rectus abd|^addom|^abs|^core|deep core|transvers/,['abs']],[/trapezio superiore|upper trapez/,['trap']],[/trapez/,['trap']],[/romboid|rhomboid/,['romb']],[/cuffia|rotator cuff/,['cuff']],
+[/dorsale|latissimus/,['lat']],[/erettori|erector|lomb|lumbor|colonna|spine/,['lomb']],[/grande gluteo|gluteus maximus|^glute[io]/,['glut']],[/medio gluteo|gluteus medius|piriform|rotatori dell'anca|hip rotator/,['glmed']],
+[/quadric|quadricep/,['quad']],[/femoral|hamstring/,['fem']],[/^gambe|^legs/,['quad','fem','glut']],[/polpacc|calves|calf|soleo|soleus|gastrocn/,['polp']]];
+function regsOfStr(m){const x=m.toLowerCase().trim();for(const [re,rs] of KW){if(re.test(x))return rs}return []}
+const PRIM={panca:[0],croci:[0],spinte:[0],spinte_muro:[0],laterali:[0],squeeze:[0],kickback:[0],kickback_cavo:[0],deadbug:[0,1],plank:[0,1],plank_lat:[0,1],mcgill:[0],rematore:[0,1],lat:[0],rem_prono:[0,1],pullover:[0,1],post_incl:[0],post_prono:[0],yraise:[0],curl:[0,1],curl_panca:[0,1],ponte:[0],ponte_man:[0],ponte1:[0],birddog:[0,1],boxsquat:[0,1],stepup:[0,1],legext:[0,1],affondi:[0,1],clam:[0],polpacci:[0,1],cardio:[0],catcamel:[0,1],st_anca:[0],st_gluteo:[0],st_petto:[0]};
+function primRegs(slug){const out=new Set();const pi=PRIM[slug]||[0];EX[slug].it[3].split(/,\s*/).forEach((m,i)=>{if(pi.includes(i))regsOfStr(m).forEach(r=>out.add(r))});return out}
+function regsOf(slug){const out=new Set();EX[slug].it[3].split(/,\s*/).forEach(m=>regsOfStr(m).forEach(r=>out.add(r)));return [...out]}
+let mSel=null;
+function svgFig(side){const sym=(d)=>d+'<g transform="translate(200,0) scale(-1,1)">'+d+'</g>';
+ const r=(k,shape)=>shape.replace('/>',' class="rg" data-r="'+k+'"><title>'+REG[k][lang==='en'?1:0]+'</title></'+shape.match(/^<(\w+)/)[1]+'>');
+ let sil='<circle class="sil" cx="100" cy="28" r="17"/><rect class="sil" x="91" y="40" width="18" height="18"/>'
+ +'<path class="sil" d="M72 56 L128 56 C143 60 147 74 142 90 L132 120 C126 150 124 180 128 212 L133 238 L67 238 L72 212 C76 180 74 150 68 120 L58 90 C53 74 57 60 72 56 Z"/>'
+ +sym('<ellipse class="sil" cx="58" cy="110" rx="12" ry="28"/><ellipse class="sil" cx="52" cy="160" rx="10" ry="28"/><circle class="sil" cx="48" cy="195" r="8"/><ellipse class="sil" cx="84" cy="262" rx="18" ry="46"/><ellipse class="sil" cx="83" cy="340" rx="12" ry="36"/><ellipse class="sil" cx="83" cy="382" rx="12" ry="6"/>');
+ let m='';const cue=side==='front'?'<circle class="face" cx="94" cy="26" r="2.2"/><circle class="face" cx="106" cy="26" r="2.2"/><path class="face" d="M94 34 Q100 39 106 34 Q100 37 94 34 Z"/><circle class="face" cx="100" cy="196" r="1.8"/>':'<path class="face" d="M83 26 C83 6 117 6 117 26 C112 20 88 20 83 26 Z"/>';
+ if(side==='front'){
+  m+=sym(r('trap','<path d="M92 50 L74 60 L92 62 Z"/>'));
+  m+=sym(r('deltA','<path d="M70 60 C60 62 54 72 55 86 C60 84 66 78 72 70 Z"/>'));
+  m+=sym(r('deltL','<path d="M55 88 C52 78 54 68 60 63 C54 66 49 76 50 90 Z"/>'));
+  m+=sym(r('pett','<path d="M99 64 C88 62 76 66 73 72 C72 88 82 100 99 100 Z"/>'));
+  m+=sym(r('bic','<ellipse cx="59" cy="114" rx="8" ry="20"/>'));
+  m+=sym(r('avam','<ellipse cx="52" cy="160" rx="7" ry="24"/>'));
+  m+=sym(r('dent','<path d="M74 98 L84 102 L82 122 L72 116 Z"/>'));
+  m+=sym(r('obl','<path d="M86 108 L76 124 C76 150 78 172 86 192 L89 188 L89 110 Z"/>'));
+  m+=r('abs','<rect x="90" y="104" width="20" height="86" rx="6"/>');
+  m+=sym(r('flex','<path d="M86 198 L97 214 L94 226 L84 214 Z"/>'));
+  m+=sym(r('quad','<ellipse cx="82" cy="266" rx="14" ry="38"/>'));
+  m+=sym(r('polp','<ellipse cx="78" cy="336" rx="5" ry="22"/>'));
+ }else{
+  m+=r('trap','<path d="M100 46 L72 62 L88 70 L100 132 L112 70 L128 62 Z"/>');
+  m+=sym(r('deltP','<path d="M70 60 C60 62 54 72 55 88 C62 86 68 78 73 68 Z"/>'));
+  m+=sym(r('cuff','<ellipse cx="80" cy="84" rx="8" ry="9"/>'));
+  m+=sym(r('romb','<path d="M98 74 L90 78 L92 102 L98 106 Z"/>'));
+  m+=sym(r('tric','<ellipse cx="57" cy="114" rx="8" ry="20"/>'));
+  m+=sym(r('avam','<ellipse cx="51" cy="160" rx="7" ry="24"/>'));
+  m+=sym(r('lat','<path d="M74 96 C70 120 76 150 92 172 L97 168 L97 136 L87 108 Z"/>'));
+  m+=sym(r('lomb','<rect x="90" y="138" width="8" height="64" rx="4"/>'));
+  m+=sym(r('glmed','<ellipse cx="77" cy="210" rx="9" ry="9"/>'));
+  m+=sym(r('glut','<ellipse cx="88" cy="226" rx="13" ry="15"/>'));
+  m+=sym(r('fem','<ellipse cx="84" cy="276" rx="13" ry="32"/>'));
+  m+=sym(r('polp','<ellipse cx="83" cy="336" rx="10" ry="24"/>'));
+ }
+ return '<svg viewBox="30 6 140 386" role="img" aria-label="'+MT[lang][side]+'">'+sil+m+cue+(side==='back'?'<path class="spine" d="M100 46 V236"/><path class="face" d="M83 26 C83 10 117 10 117 26 C117 36 112 42 100 42 C88 42 83 36 83 26 Z" opacity=".55"/>':'')+'</svg>'}
+function renderMap(){const el=document.getElementById('mapS');const M=MT[lang];const day=cur.day;el.style.setProperty('--k',COLORS[day]);
+ const exs=exList(day).map(([slug])=>slug);const cnt={};const by={};const prm={};exs.forEach(sl=>primRegs(sl).forEach(r=>prm[r]=1));
+ exs.forEach(sl=>regsOf(sl).forEach(r=>{cnt[r]=(cnt[r]||0)+1;(by[r]=by[r]||[]).push(EX[sl][lang][0])}));
+ const max=Math.max(1,...Object.values(cnt));
+ let h='<h2>'+M.title+'</h2><p>'+M.sub+'</p><div class="mapwrap"><figure>'+svgFig('front')+'<figcaption>'+M.front+'<small>'+M.fsub+'</small></figcaption></figure><figure>'+svgFig('back')+'<figcaption>'+M.back+'<small>'+M.bsub+'</small></figcaption></figure></div><div class="mcap" id="mcap" aria-live="polite"></div><div class="mleg">';
+ Object.keys(REG).sort((a,b)=>(cnt[b]||0)-(cnt[a]||0)).forEach(k=>{h+='<button type="button" class="lchip'+(cnt[k]?' on':'')+'" data-r="'+k+'" aria-pressed="false">'+REG[k][lang==='en'?1:0]+(cnt[k]?' · '+cnt[k]:'')+'</button>'});
+ h+='</div>';el.innerHTML=h;
+ const paint=()=>{let act=null,cap='';
+  if(mSel&&mSel.slug){act=new Set(regsOf(mSel.slug));cap='<b>'+M.ex+':</b> '+EX[mSel.slug][lang][0]}
+  else if(mSel&&mSel.r){act=new Set([mSel.r]);cap='<b>'+REG[mSel.r][lang==='en'?1:0]+'</b> — '+(by[mSel.r]?M.worked+': '+by[mSel.r].join(', '):M.none)}
+  else cap=M.all;
+  el.querySelectorAll('.rg').forEach(p=>{const k=p.dataset.r;p.classList.remove('on','lo','sel');
+   if(act){if(act.has(k))p.classList.add('on','sel')}else if(cnt[k]){p.classList.add(prm[k]?'on':'lo')}});
+  el.querySelectorAll('.lchip').forEach(b=>b.setAttribute('aria-pressed',mSel&&(mSel.r===b.dataset.r||(mSel.slug&&act.has(b.dataset.r)))?'true':'false'));
+  document.getElementById('mcap').innerHTML=cap+(mSel?' · <button type="button" class="bodyb" id="mclr">'+M.all+'</button>':'')};
+ el.onclick=ev=>{const t=ev.target.closest('[data-r]');if(ev.target.closest('#mclr')){mSel=null;paint();return}if(!t)return;const k=t.dataset.r;mSel=(mSel&&mSel.r===k)?null:{r:k};paint()};
+ paint()}
+document.getElementById('list').addEventListener('click',ev=>{const b=ev.target.closest('.mchip,.bodyb');if(!b||b.disabled)return;
+ const card=b.closest('.ex');const cm=card.querySelector('.cmap');
+ card.querySelectorAll('.mchip,.bodyb').forEach(x=>x.setAttribute('aria-pressed','false'));
+ b.setAttribute('aria-pressed','true');
+ const act=new Set(b.classList.contains('bodyb')?regsOf(b.dataset.slug):b.dataset.rs.split(','));
+ const M=MT[lang];const nm=b.classList.contains('bodyb')?card.dataset.name:b.dataset.nm;
+ cm.innerHTML='<div class="cmtop"><div class="mcap"><b>'+nm+'</b></div><button type="button" class="cmx">✕ '+M.close+'</button></div><div class="mapwrap"><figure>'+svgFig('front')+'<figcaption>'+M.front+'<small>'+M.fsub+'</small></figcaption></figure><figure>'+svgFig('back')+'<figcaption>'+M.back+'<small>'+M.bsub+'</small></figcaption></figure></div>';
+ const pset=b.classList.contains('bodyb')?primRegs(b.dataset.slug):null;
+ cm.querySelectorAll('.rg').forEach(p=>{const k=p.dataset.r;if(!act.has(k))return;if(!pset||pset.has(k))p.classList.add('on','sel');else p.classList.add('lo')});
+ cm.hidden=false;
+ const r=cm.getBoundingClientRect();const hh=document.querySelector('header').getBoundingClientRect().bottom;
+ if(r.bottom>innerHeight-90||r.top<hh)window.scrollTo({top:scrollY+r.top-hh-8});
+});
+document.getElementById('list').addEventListener('click',ev=>{const x=ev.target.closest('.cmx');if(!x)return;const card=x.closest('.ex');const cm=card.querySelector('.cmap');cm.hidden=true;cm.innerHTML='';card.querySelectorAll('.mchip,.bodyb').forEach(y=>y.setAttribute('aria-pressed','false'))});
+document.getElementById('list').addEventListener('click',ev=>{const p=ev.target.closest('.cmap .rg');if(!p)return;const card=p.closest('.ex');const k=p.dataset.r;
+ const cap=card.querySelector('.cmap .mcap');cap.innerHTML='<b>'+REG[k][lang==='en'?1:0]+'</b>'});
+render();
+</script>
+
+<script>if('serviceWorker' in navigator){addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(()=>{})})}</script>
+</body></html>
