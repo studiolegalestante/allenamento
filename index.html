@@ -105,6 +105,8 @@ footer{font-size:13px;color:var(--muted)}
 .timer.work button{background:#fff;color:#13756b}
 .lang{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--card)}
 
+.alt{margin:-4px 0 0;font-size:14px;color:var(--muted)}
+.alt b{color:var(--k)}
 .musline{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:13px}
 .mchip{border:1px solid var(--k);color:var(--k);border-radius:999px;padding:4px 10px;font:600 13px var(--body);background:transparent;cursor:pointer;min-height:32px}
 .mchip[aria-pressed="true"]{background:var(--k);color:var(--card)}
@@ -263,7 +265,7 @@ function render(){const L=t();applyStatic();
   const id=(day==='D'?'':P())+day+i;const n=setsFor(reps,day,isAbs);
   const card=document.createElement('article');card.className='ex';card.style.setProperty('--k',COLORS[day]);
   let reps2=repsT(reps);if(/^\d×/.test(reps))reps2=reps2.replace(/^\d/,String(n));
-  let h='<div class="exhead"><div class="exname">'+(core?'<div class="tag">'+core+'</div>':'')+name+'<div class="reps">'+reps2+'</div></div><div class="btns"><a class="vid" href="'+Q(q)+'" target="_blank" rel="noopener">'+vidIcon+L.video+'</a>'+(durOf(reps)?'<button type="button" class="vid tmr" data-sec="'+durOf(reps).sec+'" data-sides="'+(durOf(reps).sides?1:0)+'" data-name="'+name.replace(/"/g,'&quot;')+'">'+clockIcon+durOf(reps).label+'</button>':'')+'</div></div><p class="how">'+how+'</p>';
+  let h='<div class="exhead"><div class="exname">'+(core?'<div class="tag">'+core+'</div>':'')+name+'<div class="reps">'+reps2+'</div></div><div class="btns"><a class="vid" href="'+Q(q)+'" target="_blank" rel="noopener">'+vidIcon+L.video+'</a>'+(durOf(reps)?'<button type="button" class="vid tmr" data-sec="'+durOf(reps).sec+'" data-sides="'+(durOf(reps).sides?1:0)+'" data-name="'+name.replace(/"/g,'&quot;')+'">'+clockIcon+durOf(reps).label+'</button>':'')+'</div></div><p class="how">'+how+'</p>'+(ALT[slug]?'<p class="alt"><b>'+(lang==='en'?'Alternatives':'Alternative')+':</b> '+ALT[slug][lang]+'</p>':'');
   h+='<div class="musline">'+mus.split(/,\s*/).map((m,mi)=>{const rs=regsOfStr(m);const pr=(PRIM[slug]||[0]).includes(mi);const nm=(x=>x.charAt(0).toUpperCase()+x.slice(1))(m.replace(/[()]/g,''));return '<button type="button" class="mchip'+(pr?' pri':'')+'" data-rs="'+rs.join(',')+'" data-nm="'+nm.replace(/"/g,'&quot;')+'" aria-pressed="false"'+(rs.length?'':' disabled')+'>'+nm+'</button>'}).join('')+(regsOf(slug).length?'<button type="button" class="bodyb" data-slug="'+slug+'" aria-pressed="false">'+MT[lang].onBody+'</button>':'')+'<span class="mleg2">★ '+MT[lang].prim+'</span></div><div class="cmap" hidden></div>';
   h+='<details class="exd"><summary>'+L.howto+'</summary><p class="desc">'+desc+'</p></details>';
   h+='<div class="row" role="group" aria-label="'+L.setsDone+'">';
@@ -353,6 +355,19 @@ document.getElementById('dataBox').addEventListener('click',async ev=>{const D=D
   if(!confirm(D.conf))return;try{localStorage.clear();Object.entries(o.data).forEach(([k,v])=>{if(typeof v==='string')localStorage.setItem(k,v)})}catch(e){msg(D.bad);return}
   msg(D.ok);setTimeout(()=>location.reload(),600)}});
 
+const ALT={
+panca_incl:{it:'Macchina: incline press (stessa macchina della chest press) · Manubri: panca piana con manubri',en:'Machine: incline press (same machine as the chest press) · Dumbbells: flat dumbbell bench press'},
+chest_press:{it:'Macchina: pectoral fly · Manubri: panca piana con manubri',en:'Machine: pectoral fly · Dumbbells: flat dumbbell bench press'},
+shoulder_m:{it:'Manubri: spinte da seduto con schienale alto',en:'Dumbbells: seated press with high backrest'},
+pushdown:{it:'Manubri: kickback in appoggio sulla panca',en:'Dumbbells: supported kickback on the bench'},
+lat:{it:'Manubri: pullover sulla panca',en:'Dumbbells: pullover on the bench'},
+pulley:{it:'Manubri: rematore con un manubrio in appoggio sulla panca',en:'Dumbbells: one-arm supported row on the bench'},
+facepull:{it:'Macchina: rear deltoid (stessa macchina del pectoral fly) · Manubri: alzate posteriori su panca inclinata',en:'Machine: rear deltoid (same machine as the pectoral fly) · Dumbbells: rear raises on an incline bench'},
+legpress:{it:'Corpo libero: squat sulla panca',en:'Bodyweight: box squat to the bench'},
+legext1:{it:'Corpo libero: affondi statici con appoggio',en:'Bodyweight: supported static lunges'},
+legcurl1:{it:'Corpo libero: ponte glutei su una gamba',en:'Bodyweight: single-leg glute bridge'},
+goblet:{it:'Corpo libero: squat sulla panca senza peso',en:'Bodyweight: box squat without weight'},
+polp_lp:{it:'Corpo libero: polpacci in piedi con appoggio',en:'Bodyweight: standing calf raises with support'}};
 const MT={it:{title:'Mappa dei muscoli',sub:'Colorati i muscoli allenati oggi: pieno = muscolo principale di almeno un esercizio, chiaro = solo secondario. Tocca un muscolo o un nome per vedere quali esercizi lo lavorano.',front:'Fronte',back:'Retro',fsub:'visto di fronte',bsub:'visto da dietro',close:'Chiudi',all:'Tutti i muscoli di oggi',onBody:'Vedi sul corpo',prim:'= muscolo principale · sul corpo: pieno = principale, chiaro = secondario',none:'Nessun esercizio di oggi lo lavora',ex:'Esercizio',worked:'Lavorato da'},
 en:{title:'Muscle map',sub:'Muscles trained today are coloured: solid = main muscle of at least one exercise, light = secondary only. Tap a muscle or a name to see which exercises work it.',front:'Front',back:'Back',fsub:'seen from the front',bsub:'seen from behind',close:'Close',all:'All of today\'s muscles',onBody:'Show on body',prim:'= main muscle · on the body: solid = main, light = secondary',none:'No exercise today works it',ex:'Exercise',worked:'Worked by'}};
 const REG={pett:['Pettorale','Pectorals'],deltA:['Deltoide anteriore','Front deltoid'],deltL:['Deltoide laterale','Lateral deltoid'],deltP:['Deltoide posteriore','Rear deltoid'],
