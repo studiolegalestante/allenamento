@@ -52,7 +52,8 @@ h1{font-family:var(--display);font-size:28px;margin:0;text-transform:uppercase;l
 .mbtn2[aria-pressed="true"]{background:var(--fg);color:var(--bg)}
 .mbtn2:focus-visible{outline:3px solid var(--fg);outline-offset:-3px}
 .set small{display:block;font:600 11px var(--body);letter-spacing:.2px}
-.set{min-width:64px;width:64px;min-height:48px;border-radius:10px;border:2px solid var(--line);background:transparent;color:var(--fg);font-family:var(--display);font-size:20px;cursor:pointer;font-variant-numeric:tabular-nums}
+.reps{font-family:var(--display);font-size:26px;font-weight:700;line-height:1.1;color:var(--k);margin-top:4px;letter-spacing:.3px;font-variant-numeric:tabular-nums}
+.set{min-width:68px;width:68px;min-height:58px;border-radius:10px;border:2px solid var(--line);background:transparent;color:var(--fg);font-family:var(--display);font-size:28px;cursor:pointer;font-variant-numeric:tabular-nums}
 .set[aria-pressed="true"]{background:var(--done);border-color:var(--done);color:var(--card)}
 .kg{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:14px;color:var(--muted)}
 .kg label{font-weight:600;color:var(--fg)}
@@ -262,7 +263,7 @@ function render(){const L=t();applyStatic();
   const id=(day==='D'?'':P())+day+i;const n=setsFor(reps,day,isAbs);
   const card=document.createElement('article');card.className='ex';card.style.setProperty('--k',COLORS[day]);
   let reps2=repsT(reps);if(/^\d×/.test(reps))reps2=reps2.replace(/^\d/,String(n));
-  let h='<div class="exhead"><div class="exname">'+(core?'<div class="tag">'+core+'</div>':'')+name+'<div class="tag" style="color:var(--muted)">'+reps2+'</div></div><div class="btns"><a class="vid" href="'+Q(q)+'" target="_blank" rel="noopener">'+vidIcon+L.video+'</a>'+(durOf(reps)?'<button type="button" class="vid tmr" data-sec="'+durOf(reps).sec+'" data-sides="'+(durOf(reps).sides?1:0)+'" data-name="'+name.replace(/"/g,'&quot;')+'">'+clockIcon+durOf(reps).label+'</button>':'')+'</div></div><p class="how">'+how+'</p>';
+  let h='<div class="exhead"><div class="exname">'+(core?'<div class="tag">'+core+'</div>':'')+name+'<div class="reps">'+reps2+'</div></div><div class="btns"><a class="vid" href="'+Q(q)+'" target="_blank" rel="noopener">'+vidIcon+L.video+'</a>'+(durOf(reps)?'<button type="button" class="vid tmr" data-sec="'+durOf(reps).sec+'" data-sides="'+(durOf(reps).sides?1:0)+'" data-name="'+name.replace(/"/g,'&quot;')+'">'+clockIcon+durOf(reps).label+'</button>':'')+'</div></div><p class="how">'+how+'</p>';
   h+='<div class="musline">'+mus.split(/,\s*/).map((m,mi)=>{const rs=regsOfStr(m);const pr=(PRIM[slug]||[0]).includes(mi);const nm=(x=>x.charAt(0).toUpperCase()+x.slice(1))(m.replace(/[()]/g,''));return '<button type="button" class="mchip'+(pr?' pri':'')+'" data-rs="'+rs.join(',')+'" data-nm="'+nm.replace(/"/g,'&quot;')+'" aria-pressed="false"'+(rs.length?'':' disabled')+'>'+nm+'</button>'}).join('')+(regsOf(slug).length?'<button type="button" class="bodyb" data-slug="'+slug+'" aria-pressed="false">'+MT[lang].onBody+'</button>':'')+'<span class="mleg2">★ '+MT[lang].prim+'</span></div><div class="cmap" hidden></div>';
   h+='<details class="exd"><summary>'+L.howto+'</summary><p class="desc">'+desc+'</p></details>';
   h+='<div class="row" role="group" aria-label="'+L.setsDone+'">';
