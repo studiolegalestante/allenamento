@@ -107,6 +107,11 @@ footer{font-size:13px;color:var(--muted)}
 
 .alt{margin:-4px 0 0;font-size:14px;color:var(--muted)}
 .alt b{color:var(--k)}
+.prog{display:flex;align-items:center;gap:10px}
+.progbar{flex:1;height:10px;border-radius:999px;background:var(--line);overflow:hidden}
+.progbar i{display:block;height:100%;width:0;background:var(--k,var(--done));border-radius:999px;transition:width .3s}
+.prog.full .progbar i{background:var(--done)}
+#progTxt{font:700 15px var(--body);font-variant-numeric:tabular-nums;white-space:nowrap}
 .musline{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:13px}
 .mchip{border:1px solid var(--k);color:var(--k);border-radius:999px;padding:4px 10px;font:600 13px var(--body);background:transparent;cursor:pointer;min-height:32px}
 .mchip[aria-pressed="true"]{background:var(--k);color:var(--card)}
@@ -166,6 +171,7 @@ footer{font-size:13px;color:var(--muted)}
     <button type="button" class="mbtn" id="m-bil" data-mode="bil" aria-pressed="false"></button>
     <button type="button" class="mbtn" id="m-full" data-mode="full" aria-pressed="false"></button>
   </div>
+  <div class="prog" id="prog"><div class="progbar"><i id="progFill"></i></div><span id="progTxt" aria-live="polite"></span></div>
 </header>
 
 <section class="intro" id="intro"></section>
@@ -287,7 +293,7 @@ function render(){const L=t();applyStatic();
   } else if(kg){h+='<div class="kg"><span class="sugg">'+L.bw+'</span></div>'}
   card.innerHTML=h;if(ds.length&&ds.filter(Boolean).length>=n)card.classList.add('complete');list.appendChild(card);
  });
- store.set('lastDayPick',cur);renderMap();renderData();renderLog()}
+ store.set('lastDayPick',cur);renderMap();renderData();renderLog();updProg()}
 document.querySelectorAll('.lbtn').forEach(b=>b.addEventListener('click',()=>{lang=b.dataset.l;store.set('lang',lang);render()}));
 document.querySelectorAll('.pbtn').forEach(b=>b.addEventListener('click',()=>{pmode=b.dataset.p;store.set('pmode',pmode);render()}));
 document.querySelectorAll('.ubtn:not(.lbtn)').forEach(b=>b.addEventListener('click',()=>{unit=b.dataset.u;store.set('unit',unit);render()}));
@@ -300,7 +306,7 @@ document.getElementById('list').addEventListener('click',ev=>{
  const arr=done[b.dataset.id]||[];const s=+b.dataset.s;arr[s]=!arr[s];done[b.dataset.id]=arr;store.set(key,done);
  b.setAttribute('aria-pressed',arr[s]?'true':'false');
  logSession();
- const card=b.closest('.ex');const n=card.querySelectorAll('.set').length;card.classList.toggle('complete',arr.filter(Boolean).length>=n);
+ const card=b.closest('.ex');const n=card.querySelectorAll('.set').length;card.classList.toggle('complete',arr.filter(Boolean).length>=n);updProg();
  if(arr[s]&&cur.day!=='D')startTimer(75,card.dataset.name);
 });
 document.getElementById('list').addEventListener('change',ev=>{const inp=ev.target.closest('input.w');if(!inp)return;const kgs=store.get('kg',{});const id=inp.dataset.id;
@@ -368,6 +374,7 @@ legext1:{it:'Corpo libero: affondi statici con appoggio',en:'Bodyweight: support
 legcurl1:{it:'Corpo libero: ponte glutei su una gamba',en:'Bodyweight: single-leg glute bridge'},
 goblet:{it:'Corpo libero: squat sulla panca senza peso',en:'Bodyweight: box squat without weight'},
 polp_lp:{it:'Corpo libero: polpacci in piedi con appoggio',en:'Bodyweight: standing calf raises with support'}};
+function updProg(){const el=document.getElementById('prog');if(!el)return;const sets=[...document.querySelectorAll('#list .set')];const done=sets.filter(b=>b.getAttribute('aria-pressed')==='true').length;const cards=[...document.querySelectorAll('#list .ex')];const exDone=cards.filter(c=>c.classList.contains('complete')).length;const pct=sets.length?Math.round(done/sets.length*100):0;el.style.setProperty('--k',COLORS[cur.day]);document.getElementById('progFill').style.width=pct+'%';el.classList.toggle('full',pct===100);document.getElementById('progTxt').textContent=pct+'% · '+exDone+'/'+cards.length+(lang==='en'?' exercises':' esercizi')}
 const MT={it:{title:'Mappa dei muscoli',sub:'Colorati i muscoli allenati oggi: pieno = muscolo principale di almeno un esercizio, chiaro = solo secondario. Tocca un muscolo o un nome per vedere quali esercizi lo lavorano.',front:'Fronte',back:'Retro',fsub:'visto di fronte',bsub:'visto da dietro',close:'Chiudi',all:'Tutti i muscoli di oggi',onBody:'Vedi sul corpo',prim:'= muscolo principale · sul corpo: pieno = principale, chiaro = secondario',none:'Nessun esercizio di oggi lo lavora',ex:'Esercizio',worked:'Lavorato da'},
 en:{title:'Muscle map',sub:'Muscles trained today are coloured: solid = main muscle of at least one exercise, light = secondary only. Tap a muscle or a name to see which exercises work it.',front:'Front',back:'Back',fsub:'seen from the front',bsub:'seen from behind',close:'Close',all:'All of today\'s muscles',onBody:'Show on body',prim:'= main muscle · on the body: solid = main, light = secondary',none:'No exercise today works it',ex:'Exercise',worked:'Worked by'}};
 const REG={pett:['Pettorale','Pectorals'],deltA:['Deltoide anteriore','Front deltoid'],deltL:['Deltoide laterale','Lateral deltoid'],deltP:['Deltoide posteriore','Rear deltoid'],
