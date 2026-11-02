@@ -112,6 +112,9 @@ footer{font-size:13px;color:var(--muted)}
 .progbar i{display:block;height:100%;width:0;background:var(--k,var(--done));border-radius:999px;transition:width .3s}
 .prog.full .progbar i{background:var(--done)}
 #progTxt{font:700 15px var(--body);font-variant-numeric:tabular-nums;white-space:nowrap}
+.sbar{position:fixed;right:0;top:0;bottom:0;width:22px;z-index:12;touch-action:none;pointer-events:none}
+.sbar i{position:absolute;right:3px;width:6px;min-height:36px;border-radius:999px;background:var(--fg);opacity:.35;pointer-events:auto;transition:opacity .2s,width .2s}
+.sbar.act i{opacity:.7;width:9px}
 .musline{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:13px}
 .mchip{border:1px solid var(--k);color:var(--k);border-radius:999px;padding:4px 10px;font:600 13px var(--body);background:transparent;cursor:pointer;min-height:32px}
 .mchip[aria-pressed="true"]{background:var(--k);color:var(--card)}
@@ -375,6 +378,14 @@ legcurl1:{it:'Corpo libero: ponte glutei su una gamba',en:'Bodyweight: single-le
 goblet:{it:'Corpo libero: squat sulla panca senza peso',en:'Bodyweight: box squat without weight'},
 polp_lp:{it:'Corpo libero: polpacci in piedi con appoggio',en:'Bodyweight: standing calf raises with support'}};
 function updProg(){const el=document.getElementById('prog');if(!el)return;const sets=[...document.querySelectorAll('#list .set')];const done=sets.filter(b=>b.getAttribute('aria-pressed')==='true').length;const cards=[...document.querySelectorAll('#list .ex')];const exDone=cards.filter(c=>c.classList.contains('complete')).length;const pct=sets.length?Math.round(done/sets.length*100):0;el.style.setProperty('--k',COLORS[cur.day]);document.getElementById('progFill').style.width=pct+'%';el.classList.toggle('full',pct===100);document.getElementById('progTxt').textContent=pct+'% · '+exDone+'/'+cards.length+(lang==='en'?' exercises':' esercizi')}
+(function(){const sb=document.createElement('div');sb.className='sbar';sb.setAttribute('aria-hidden','true');const th=document.createElement('i');sb.appendChild(th);document.body.appendChild(sb);
+ const top0=()=>parseFloat(getComputedStyle(document.documentElement).paddingTop)||0;
+ function pos(){const H=document.documentElement.scrollHeight,V=innerHeight,max=H-V;if(max<=4){sb.style.display='none';return}sb.style.display='';const T=top0()+4,B=(document.getElementById('timer').hidden?4:document.getElementById('timer').offsetHeight+4);const track=V-T-B;const h=Math.max(36,track*V/H);th.style.height=h+'px';th.style.top=(T+(track-h)*(scrollY/max))+'px'}
+ addEventListener('scroll',pos,{passive:true});addEventListener('resize',pos);new ResizeObserver(pos).observe(document.body);new MutationObserver(pos).observe(document.getElementById('timer'),{attributes:true});
+ let drag=null;th.addEventListener('pointerdown',e=>{e.preventDefault();th.setPointerCapture(e.pointerId);drag={y:e.clientY,s:scrollY};sb.classList.add('act')});
+ th.addEventListener('pointermove',e=>{if(!drag)return;const H=document.documentElement.scrollHeight,V=innerHeight,max=H-V;const track=V-top0()-8-(document.getElementById('timer').hidden?0:document.getElementById('timer').offsetHeight);const h=th.offsetHeight;scrollTo(0,drag.s+(e.clientY-drag.y)*max/Math.max(1,track-h))});
+ const end=()=>{drag=null;sb.classList.remove('act')};th.addEventListener('pointerup',end);th.addEventListener('pointercancel',end);
+ let t;addEventListener('scroll',()=>{sb.classList.add('act');clearTimeout(t);t=setTimeout(()=>{if(!drag)sb.classList.remove('act')},700)},{passive:true});pos()})();
 const MT={it:{title:'Mappa dei muscoli',sub:'Colorati i muscoli allenati oggi: pieno = muscolo principale di almeno un esercizio, chiaro = solo secondario. Tocca un muscolo o un nome per vedere quali esercizi lo lavorano.',front:'Fronte',back:'Retro',fsub:'visto di fronte',bsub:'visto da dietro',close:'Chiudi',all:'Tutti i muscoli di oggi',onBody:'Vedi sul corpo',prim:'= muscolo principale · sul corpo: pieno = principale, chiaro = secondario',none:'Nessun esercizio di oggi lo lavora',ex:'Esercizio',worked:'Lavorato da'},
 en:{title:'Muscle map',sub:'Muscles trained today are coloured: solid = main muscle of at least one exercise, light = secondary only. Tap a muscle or a name to see which exercises work it.',front:'Front',back:'Back',fsub:'seen from the front',bsub:'seen from behind',close:'Close',all:'All of today\'s muscles',onBody:'Show on body',prim:'= main muscle · on the body: solid = main, light = secondary',none:'No exercise today works it',ex:'Exercise',worked:'Worked by'}};
 const REG={pett:['Pettorale','Pectorals'],deltA:['Deltoide anteriore','Front deltoid'],deltL:['Deltoide laterale','Lateral deltoid'],deltP:['Deltoide posteriore','Rear deltoid'],
