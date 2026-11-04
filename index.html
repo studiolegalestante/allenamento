@@ -328,7 +328,7 @@ document.getElementById('list').addEventListener('click',ev=>{
  b.setAttribute('aria-pressed',arr[s]?'true':'false');
  logSession();
  const card=b.closest('.ex');const n=card.querySelectorAll('.set').length;card.classList.toggle('complete',arr.filter(Boolean).length>=n);updProg();
- if(arr[s]&&cur.day!=='D')startTimer(75,card.dataset.name);
+ if(arr[s]){const D=cur.day==='D';const fin=arr.filter(Boolean).length>=n;let nx=null;if(fin){let c=card.nextElementSibling;while(c&&c.classList.contains('complete'))c=c.nextElementSibling;nx=c&&c.dataset.name}startTimer(fin?(D?45:90):(D?30:75),fin?(nx?(lang==='en'?'next: ':'prossimo: ')+nx:(lang==='en'?'workout done':'allenamento finito')):card.dataset.name)}
 });
 document.getElementById('list').addEventListener('change',ev=>{const inp=ev.target.closest('input.w');if(!inp)return;const kgs=store.get('kg',{});const id=inp.dataset.id;
  const card=inp.closest('.ex');const vals=[...card.querySelectorAll('input.w')].map(i=>i.value.trim().replace(',','.'));
