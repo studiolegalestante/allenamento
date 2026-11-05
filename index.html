@@ -78,6 +78,7 @@ details ul{margin:8px 0 0;padding-left:18px;display:flex;flex-direction:column;g
 .timer .t{font-family:var(--display);font-size:34px;font-variant-numeric:tabular-nums;min-width:72px}
 .timer .lbl{flex:1;min-width:0;font-size:14px}
 .timer #snd{padding:10px}
+.timer #side2{background:#fff;color:#13756b;font-size:16px;padding:10px 16px}
 .timer #snd[aria-pressed="false"]{opacity:.5}
 .timer #snd[aria-pressed="false"] .w1,.timer #snd[aria-pressed="false"] .w2{display:none}
 .timer button{background:var(--bg);color:var(--fg);border:0;border-radius:10px;padding:10px 14px;font:700 14px var(--body);min-height:44px;cursor:pointer}
@@ -220,7 +221,7 @@ h1{font-size:20px;line-height:1.1}
   <div class="t" id="tt" aria-live="polite">75</div>
   <div class="lbl" id="tl"></div>
   <button type="button" id="snd" aria-pressed="true"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path class="w1" d="M16 8.5a5 5 0 0 1 0 7" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/><path class="w2" d="M18.5 6a9 9 0 0 1 0 12" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg></button>
-  <button type="button" id="plus">+15"</button>
+  <button type="button" id="side2" hidden></button><button type="button" id="plus">+15"</button>
   <button type="button" id="skip"></button>
 </div>
 
@@ -355,17 +356,17 @@ async function wakeOn(){try{if('wakeLock' in navigator&&!wl){wl=await navigator.
 function wakeOff(){try{if(wl){wl.release();wl=null}}catch(e){}}
 let tNext=null,tWork=false,tLbl='';
 function saveT(){store.set('timer',{end:tEnd,tot:tTot,label:tLbl,work:tWork,next:tNext})}
-function startTimer(sec,label,next,work,end){if(!end)ac();wakeOn();tTot=sec;tEnd=end||Date.now()+sec*1000;tDone=false;tNext=next||null;tWork=!!work;tLbl=label;document.getElementById('tl').textContent=(work?t().work:t().rest)+' · '+label;TM.classList.toggle('work',tWork);TM.hidden=false;saveT();clearInterval(tId);tick();tId=setInterval(tick,250)}
+function startTimer(sec,label,next,work,end){document.getElementById('side2').hidden=true;document.getElementById('plus').hidden=false;if(!end)ac();wakeOn();tTot=sec;tEnd=end||Date.now()+sec*1000;tDone=false;tNext=next||null;tWork=!!work;tLbl=label;document.getElementById('tl').textContent=(work?t().work:t().rest)+' · '+label;TM.classList.toggle('work',tWork);TM.hidden=false;saveT();clearInterval(tId);tick();tId=setInterval(tick,250)}
 function fmtT(s){return s>=60?Math.floor(s/60)+':'+String(s%60).padStart(2,'0'):String(s)}
 function tick(){const left=Math.max(0,Math.ceil((tEnd-Date.now())/1000));document.getElementById('tt').textContent=fmtT(left);document.getElementById('bar').style.width=(left/tTot*100)+'%';
  if(left<=0&&!tDone){tDone=true;clearInterval(tId);if(!tNext)store.set('timer',null);document.getElementById('tl').textContent=tWork?t().workDone:t().go;chime();try{navigator.vibrate&&navigator.vibrate(300)}catch(e){}
-  if(tNext){const nx=tNext;tNext=null;setTimeout(()=>startTimer(nx.sec,nx.label,null,true),3000)}}}
+  if(tNext){waitSide(tNext)}}}
 document.addEventListener('visibilitychange',()=>{if(!document.hidden){if(!TM.hidden&&!tDone)tick();if(!TM.hidden)wakeOn()}});
 document.getElementById('plus').addEventListener('click',()=>{if(tDone){tDone=false;tTot=15;tEnd=Date.now()+15000;clearInterval(tId);tId=setInterval(tick,250)}else{tEnd+=15000;tTot=Math.max(tTot,Math.ceil((tEnd-Date.now())/1000))}saveT();tick()});
 document.getElementById('skip').addEventListener('click',()=>{clearInterval(tId);TM.hidden=true;tNext=null;store.set('timer',null);wakeOff()});
 (function(){const sv=store.get('timer',null);if(!sv||!sv.end)return;const now=Date.now();
  if(sv.end>now){startTimer(sv.tot,sv.label,sv.next,sv.work,sv.end);return}
- if(sv.next){const ne=sv.end+3000+sv.next.sec*1000;if(ne>now){startTimer(sv.next.sec,sv.next.label,null,true,ne);return}}
+ if(sv.next){if(sv.end2){if(sv.end2>now){startTimer(sv.next.sec,sv.next.label,null,true,sv.end2);return}}else{TM.hidden=false;tTot=sv.tot;tEnd=sv.end;tWork=true;tLbl=sv.label;TM.classList.add('work');document.getElementById('tt').textContent='0';document.getElementById('bar').style.width='0%';tDone=true;waitSide(sv.next);return}}
  store.set('timer',null)})();
 
 const DT={it:{t:'Dati: esporta e importa',p:'Per portare storico, pesi e impostazioni su un altro dispositivo o nell\'app: tocca Esporta, copia il codice e incollalo in Importa dall\'altra parte.',exp:'Esporta',copy:'Copia',share:'Condividi',copied:'Copiato',imp:'Importa',ph:'Incolla qui il codice esportato',ok:'Dati importati',bad:'Codice non valido',conf:'I dati attuali verranno sostituiti. Continuare?',none:'Nessun dato da esportare'},
@@ -409,6 +410,9 @@ function updProg(){const el=document.getElementById('prog');if(!el)return;const 
 function ytId(u){const m=String(u).match(/[?&]v=([\w-]{11})/);return m?m[1]:null}
 function newPipeIntent(u){const id=ytId(u);if(!id)return null;const yt='https://www.youtube.com/watch?v='+id;return 'intent://www.youtube.com/watch?v='+id+'#Intent;scheme=https;package=org.schabi.newpipe;S.browser_fallback_url='+encodeURIComponent(yt)+';end'}
 document.addEventListener('click',ev=>{const a=ev.target.closest('a.vid');if(!a||!/Android/i.test(navigator.userAgent))return;try{if(window.top!==window)return}catch(e){return}const it=newPipeIntent(a.href);if(!it)return;ev.preventDefault();location.href=it});
+function waitSide(nx){const b=document.getElementById('side2');const L=lang==='en';tNext=nx;store.set('timer',{end:tEnd,tot:tTot,label:tLbl,work:true,next:nx});document.getElementById('tl').textContent=(L?'Switch side · ':'Cambia lato · ')+nx.label;b.textContent=L?'▶ Start':'▶ Avvia';b.hidden=false;document.getElementById('plus').hidden=true}
+document.getElementById('side2').addEventListener('click',()=>{const nx=tNext;if(!nx)return;tNext=null;document.getElementById('side2').hidden=true;document.getElementById('plus').hidden=false;const end=Date.now()+nx.sec*1000;startTimer(nx.sec,nx.label,null,true,end);store.set('timer',{end,tot:nx.sec,label:nx.label,work:true,next:null})});
+document.getElementById('skip').addEventListener('click',()=>{tNext=null;document.getElementById('side2').hidden=true;document.getElementById('plus').hidden=false});
 const MT={it:{title:'Mappa dei muscoli',sub:'Colorati i muscoli allenati oggi: pieno = muscolo principale di almeno un esercizio, chiaro = solo secondario. Tocca un muscolo o un nome per vedere quali esercizi lo lavorano.',front:'Fronte',back:'Retro',fsub:'visto di fronte',bsub:'visto da dietro',close:'Chiudi',all:'Tutti i muscoli di oggi',onBody:'Vedi sul corpo',prim:'= muscolo principale · sul corpo: pieno = principale, chiaro = secondario',none:'Nessun esercizio di oggi lo lavora',ex:'Esercizio',worked:'Lavorato da'},
 en:{title:'Muscle map',sub:'Muscles trained today are coloured: solid = main muscle of at least one exercise, light = secondary only. Tap a muscle or a name to see which exercises work it.',front:'Front',back:'Back',fsub:'seen from the front',bsub:'seen from behind',close:'Close',all:'All of today\'s muscles',onBody:'Show on body',prim:'= main muscle · on the body: solid = main, light = secondary',none:'No exercise today works it',ex:'Exercise',worked:'Worked by'}};
 const REG={pett:['Pettorale','Pectorals'],deltA:['Deltoide anteriore','Front deltoid'],deltL:['Deltoide laterale','Lateral deltoid'],deltP:['Deltoide posteriore','Rear deltoid'],
