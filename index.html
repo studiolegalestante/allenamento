@@ -273,7 +273,7 @@ function applyStatic(){const L=t();document.documentElement.lang=lang;document.g
  document.querySelectorAll('.mbtn').forEach(b=>{b.textContent=SH[b.dataset.mode];b.title=L[b.dataset.mode];b.setAttribute('aria-label',L[b.dataset.mode])});
  document.getElementById('warm').innerHTML='<h2>'+L.warmT+'</h2><p>'+L.warmS+'</p>'+L.warm.map(([txt,links],i)=>'<div class="wrow"><div class="wtxt">'+txt+'</div><div class="wlinks">'+(i===0?'<button type="button" class="vid tmr" data-sec="600" data-sides="0" data-name="'+L.warmT.split(' ·')[0]+'">'+clockIcon+'10\'</button>':'')+links.map(([lab,q])=>'<a class="vid" href="'+Q(q)+'" target="_blank" rel="noopener">'+vidIcon+lab+'</a>').join('')+'</div></div>').join('')+'<div class="wrow"><div class="wtxt" style="color:var(--muted);font-weight:500">'+L.cool+'</div></div>';
  document.getElementById('reset').textContent=L.reset;document.getElementById('logT').textContent=L.logT;document.getElementById('stop').innerHTML=L.stop;
- document.getElementById('rulesT').textContent=L.rulesT;document.getElementById('rules').innerHTML=L.rules.map(r=>'<li>'+r+'</li>').join('');document.getElementById('foot').textContent=L.footer;
+ document.getElementById('rulesT').textContent=L.rulesT;document.getElementById('rules').innerHTML=L.rules.map(r=>'<li>'+r+'</li>').join('');document.getElementById('foot').textContent=L.footer+' · v18 (05/11)';
  document.getElementById('skip').textContent=L.end;document.getElementById('snd').setAttribute('aria-label',L.snd);
  document.querySelectorAll('.lbtn').forEach(b=>b.setAttribute('aria-pressed',b.dataset.l===lang?'true':'false'))}
 function render(){const L=t();applyStatic();
