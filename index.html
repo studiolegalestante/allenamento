@@ -170,6 +170,7 @@ h1{font-size:20px;line-height:1.1}
 .dbox textarea{width:100%;box-sizing:border-box;min-height:90px;border:2px solid var(--line);border-radius:8px;background:var(--bg);color:var(--fg);font:13px ui-monospace,monospace;padding:8px}
 .dbtns{display:flex;gap:8px;flex-wrap:wrap}
 .dbtns button{border:1px solid var(--line);background:var(--card);color:var(--fg);border-radius:10px;padding:10px 14px;font:600 14px var(--body);min-height:44px;cursor:pointer}
+.bmirow{display:grid;grid-template-columns:1fr 1fr;gap:10px}.bmirow label{display:flex;flex-direction:column;gap:4px;font-weight:600}.bmirow input{border:2px solid var(--line);border-radius:8px;background:var(--bg);color:var(--fg);font:600 16px var(--body);padding:10px;min-width:0}.bmiv{font-family:var(--display);font-size:30px}.bmih{font-size:14px;color:var(--muted);font-variant-numeric:tabular-nums}
 .dmsg{font-weight:600;min-height:20px}
 .mtools{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;align-items:center}
 </style>
@@ -212,6 +213,7 @@ h1{font-size:20px;line-height:1.1}
   <summary id="rulesT"></summary>
   <ul id="rules"></ul>
 </details>
+<details id="bmiBox"><summary id="bmiT"></summary><div id="bmiC" class="dbox"></div></details>
 <details id="dataBox"><summary id="dataT"></summary><div id="dataC" class="dbox"></div></details>
 <footer id="foot"></footer>
 </div>
@@ -315,7 +317,7 @@ function render(){const L=t();applyStatic();
   } else if(kg){h+='<div class="kg"><span class="sugg">'+L.bw+'</span></div>'}
   card.innerHTML=h;if(ds.length&&ds.filter(Boolean).length>=n)card.classList.add('complete');list.appendChild(card);
  });
- store.set('lastDayPick',cur);renderMap();renderData();renderLog();updProg()}
+ store.set('lastDayPick',cur);renderMap();renderData();renderBmi();renderLog();updProg()}
 document.querySelectorAll('.lbtn').forEach(b=>b.addEventListener('click',()=>{lang=b.dataset.l;store.set('lang',lang);render()}));
 document.querySelectorAll('.pbtn').forEach(b=>b.addEventListener('click',()=>{pmode=b.dataset.p;store.set('pmode',pmode);render()}));
 document.querySelectorAll('.ubtn:not(.lbtn)').forEach(b=>b.addEventListener('click',()=>{unit=b.dataset.u;store.set('unit',unit);render()}));
@@ -464,6 +466,17 @@ function svgFig(side){const sym=(d)=>d+'<g transform="translate(200,0) scale(-1,
   m+=sym(r('polp','<ellipse cx="83" cy="336" rx="10" ry="24"/>'));
  }
  return '<svg viewBox="30 6 140 386" role="img" aria-label="'+MT[lang][side]+'">'+sil+m+cue+(side==='back'?'<path class="spine" d="M100 46 V236"/><path class="face" d="M83 26 C83 10 117 10 117 26 C117 36 112 42 100 42 C88 42 83 36 83 26 Z" opacity=".55"/>':'')+'</svg>'}
+function renderBmi(){const L=lang==='en';const B=store.get('bmi',{cm:'',hist:[]});const last=B.hist.length?B.hist[B.hist.length-1]:null;
+ document.getElementById('bmiT').textContent=L?'Weight and BMI':'Peso e IMC';
+ const v=last&&B.cm?last.kg/Math.pow(B.cm/100,2):0;
+ const cat=v?(v<18.5?(L?'underweight':'sottopeso'):v<25?(L?'normal weight':'normopeso'):v<30?(L?'overweight':'sovrappeso'):(L?'obesity':'obesità')):'';
+ const C=document.getElementById('bmiC');
+ C.innerHTML='<div class="bmirow"><label>'+(L?'Today\'s weight (kg)':'Peso di oggi (kg)')+'<input id="bmiKg" type="number" inputmode="decimal" min="30" max="250" step="0.1" value="'+(last&&last.d===todayKey?last.kg:'')+'"></label><label>'+(L?'Height (cm)':'Altezza (cm)')+'<input id="bmiCm" type="number" inputmode="decimal" min="120" max="230" value="'+(B.cm||'')+'"></label></div>'
+  +(v?'<div><span class="bmiv">'+v.toFixed(1).replace('.',L?'.':',')+'</span> '+(L?'BMI':'IMC')+' · '+cat+'</div>':'')
+  +(B.hist.length?'<div class="bmih">'+B.hist.slice(-8).reverse().map(x=>x.d.slice(8,10)+'/'+x.d.slice(5,7)+': '+String(x.kg).replace('.',L?'.':',')+' kg').join(' · ')+'</div>':'')
+  +'<div class="bmih">'+(L?'BMI is only an indication: it does not account for muscle mass.':"L'IMC è solo indicativo: non tiene conto della massa muscolare.")+'</div>';
+ const save=()=>{const kg=+document.getElementById('bmiKg').value.replace(',','.');const cm=+document.getElementById('bmiCm').value;const b=store.get('bmi',{cm:'',hist:[]});if(cm>=120&&cm<=230)b.cm=cm;if(kg>=30&&kg<=250){b.hist=b.hist.filter(x=>x.d!==todayKey);b.hist.push({d:todayKey,kg});b.hist.sort((a,c)=>a.d<c.d?-1:1)}store.set('bmi',b);renderBmi()};
+ C.querySelectorAll('input').forEach(i=>i.addEventListener('change',save))}
 function renderMap(){const el=document.getElementById('mapS');const M=MT[lang];const day=cur.day;el.style.setProperty('--k',COLORS[day]);
  const exs=exList(day).map(([slug])=>slug);const cnt={};const by={};const prm={};exs.forEach(sl=>primRegs(sl).forEach(r=>prm[r]=1));
  exs.forEach(sl=>regsOf(sl).forEach(r=>{cnt[r]=(cnt[r]||0)+1;(by[r]=by[r]||[]).push(EX[sl][lang][0])}));
