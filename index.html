@@ -107,6 +107,13 @@ footer{font-size:13px;color:var(--muted)}
 .lang{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--card)}
 
 .alt{margin:-4px 0 0;font-size:14px;color:var(--muted)}
+.regs{border:1px dashed var(--line);border-radius:12px;padding:8px 10px;display:flex;flex-direction:column;gap:6px}
+.regs>b{font-size:13px;color:var(--k)}
+.regrow{display:flex;gap:6px;align-items:center}
+.regrow input{min-width:0;font:inherit;font-size:16px;padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:transparent;color:inherit}
+.regrow input.rn{flex:2}.regrow input.rv{flex:1;text-align:center}
+.regrow .rdel{border:0;background:none;color:var(--muted);font-size:20px;line-height:1;padding:0 4px}
+.radd{align-self:flex-start;border:1px solid var(--line);background:none;color:var(--k);border-radius:999px;padding:4px 12px;font:inherit;font-size:14px}
 .alt b{color:var(--k)}
 .prog{display:flex;align-items:center;gap:10px}
 .progbar{flex:1;height:10px;border-radius:999px;background:var(--line);overflow:hidden}
@@ -275,9 +282,20 @@ function applyStatic(){const L=t();document.documentElement.lang=lang;document.g
  document.querySelectorAll('.mbtn').forEach(b=>{b.textContent=SH[b.dataset.mode];b.title=L[b.dataset.mode];b.setAttribute('aria-label',L[b.dataset.mode])});
  document.getElementById('warm').innerHTML='<h2>'+L.warmT+'</h2><p>'+L.warmS+'</p>'+({A:[0,1,3,2],B:[0,4,7,2],C:[0,4,5,6],D:[0,1,2]}[cur.day]||[0,1,2,3]).map(i=>[L.warm[i],i]).map(([[txt,links],i])=>'<div class="wrow"><div class="wtxt">'+txt+'</div><div class="wlinks">'+(i===0?'<button type="button" class="vid tmr" data-sec="600" data-sides="0" data-name="'+L.warmT.split(' ·')[0]+'">'+clockIcon+'10\'</button>':'')+links.map(([lab,q])=>'<a class="vid" href="'+Q(q)+'" target="_blank" rel="noopener">'+vidIcon+lab+'</a>').join('')+'</div></div>').join('')+'<div class="wrow"><div class="wtxt" style="color:var(--muted);font-weight:500">'+L.cool+'</div></div>';
  document.getElementById('reset').textContent=L.reset;document.getElementById('logT').textContent=L.logT;document.getElementById('stop').innerHTML=L.stop;
- document.getElementById('rulesT').textContent=L.rulesT;document.getElementById('rules').innerHTML=L.rules.map(r=>'<li>'+r+'</li>').join('');document.getElementById('foot').textContent=L.footer+' · v25 (13/11)';
+ document.getElementById('rulesT').textContent=L.rulesT;document.getElementById('rules').innerHTML=L.rules.map(r=>'<li>'+r+'</li>').join('');document.getElementById('foot').textContent=L.footer+' · v26 (15/11)';
  document.getElementById('skip').textContent=L.end;document.getElementById('snd').setAttribute('aria-label',L.snd);
  document.querySelectorAll('.lbtn').forEach(b=>b.setAttribute('aria-pressed',b.dataset.l===lang?'true':'false'))}
+// Regolazioni delle macchine (posizione delle manopole), salvate per esercizio
+const MACH=['lat','chest_press','shoulder_m','pushdown','pulley','facepull','legpress','legext','legext1','legcurl1','polp_lp','reardelt'];
+const RT={it:{t:'Regolazioni macchina',n:'Manopola (es. sedile)',v:'Posizione',add:'+ aggiungi manopola',del:'Elimina'},en:{t:'Machine settings',n:'Knob (e.g. seat)',v:'Position',add:'+ add knob',del:'Remove'}};
+function regsHTML(slug){const R=RT[lang];const rows=(store.get('regs',{})[slug]||[]);const list=rows.length?rows:[['','']];
+ const esc=s=>String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+ return '<div class="regs" data-slug="'+slug+'"><b>'+R.t+'</b>'+list.map((r,i)=>'<div class="regrow"><input class="rn" placeholder="'+R.n+'" value="'+esc(r[0])+'" aria-label="'+R.n+'"><input class="rv" placeholder="'+R.v+'" value="'+esc(r[1])+'" aria-label="'+R.v+'">'+(i?'<button type="button" class="rdel" aria-label="'+R.del+'">×</button>':'')+'</div>').join('')+'<button type="button" class="radd">'+R.add+'</button></div>'}
+function saveRegs(box){const all=store.get('regs',{});const rows=[...box.querySelectorAll('.regrow')].map(r=>[r.querySelector('.rn').value.trim(),r.querySelector('.rv').value.trim()]).filter(r=>r[0]||r[1]);if(rows.length)all[box.dataset.slug]=rows;else delete all[box.dataset.slug];store.set('regs',all)}
+document.addEventListener('input',ev=>{const b=ev.target.closest('.regs');if(b)saveRegs(b)});
+document.addEventListener('click',ev=>{const box=ev.target.closest('.regs');if(!box)return;const R=RT[lang];
+ if(ev.target.closest('.radd')){const d=document.createElement('div');d.className='regrow';d.innerHTML='<input class="rn" placeholder="'+R.n+'" aria-label="'+R.n+'"><input class="rv" placeholder="'+R.v+'" aria-label="'+R.v+'"><button type="button" class="rdel" aria-label="'+R.del+'">×</button>';box.insertBefore(d,ev.target.closest('.radd'));d.querySelector('.rn').focus()}
+ else if(ev.target.closest('.rdel')){ev.target.closest('.regrow').remove();saveRegs(box)}});
 function render(){const L=t();applyStatic();
  document.querySelectorAll('.pbtn').forEach(b=>b.setAttribute('aria-pressed',b.dataset.p===pmode?'true':'false'));
  document.querySelectorAll('.ubtn:not(.lbtn)').forEach(b=>b.setAttribute('aria-pressed',b.dataset.u===unit?'true':'false'));
@@ -296,6 +314,7 @@ function render(){const L=t();applyStatic();
   const card=document.createElement('article');card.className='ex';card.style.setProperty('--k',COLORS[day]);
   let reps2=repsT(reps);if(/^\d×/.test(reps))reps2=reps2.replace(/^\d/,String(n));
   let h='<div class="exhead"><div class="exname">'+(core?'<div class="tag">'+core+'</div>':'')+name+'<div class="reps">'+reps2+'</div></div><div class="btns">'+(q&&q.it?q[lang]:[[L.video,q]]).map(([lb,u])=>'<a class="vid" href="'+Q(u)+'" target="_blank" rel="noopener">'+vidIcon+lb+'</a>').join('')+''+(durOf(reps)?'<button type="button" class="vid tmr" data-sec="'+durOf(reps).sec+'" data-sides="'+(durOf(reps).sides?1:0)+'" data-name="'+name.replace(/"/g,'&quot;')+'">'+clockIcon+durOf(reps).label+'</button>':'')+'</div></div><p class="how">'+how+'</p>'+(ALT[slug]?'<p class="alt"><b>'+(lang==='en'?'Alternatives':'Alternative')+':</b> '+ALT[slug][lang]+'</p>':'');
+  if(MACH.includes(slug))h+=regsHTML(slug);
   h+='<div class="musline">'+mus.split(/,\s*/).map((m,mi)=>{const rs=regsOfStr(m);const pr=(PRIM[slug]||[0]).includes(mi);const nm=(x=>x.charAt(0).toUpperCase()+x.slice(1))(m.replace(/[()]/g,''));return '<button type="button" class="mchip'+(pr?' pri':'')+'" data-rs="'+rs.join(',')+'" data-nm="'+nm.replace(/"/g,'&quot;')+'" aria-pressed="false"'+(rs.length?'':' disabled')+'>'+nm+'</button>'}).join('')+(regsOf(slug).length?'<button type="button" class="bodyb" data-slug="'+slug+'" aria-pressed="false">'+MT[lang].onBody+'</button>':'')+'<span class="mleg2">★ '+MT[lang].prim+'</span></div><div class="cmap" hidden></div>';
   h+='<details class="exd"><summary>'+L.howto+'</summary><p class="desc">'+desc+'</p></details>';
   h+='<div class="row" role="group" aria-label="'+L.setsDone+'">';
