@@ -282,7 +282,7 @@ function applyStatic(){const L=t();document.documentElement.lang=lang;document.g
  document.querySelectorAll('.mbtn').forEach(b=>{b.textContent=SH[b.dataset.mode];b.title=L[b.dataset.mode];b.setAttribute('aria-label',L[b.dataset.mode])});
  document.getElementById('warm').innerHTML='<h2>'+L.warmT+'</h2><p>'+L.warmS+'</p>'+({A:[0,1,3,2],B:[0,4,7,2],C:[0,4,5,6],D:[0,1,2]}[cur.day]||[0,1,2,3]).map(i=>[L.warm[i],i]).map(([[txt,links],i])=>'<div class="wrow"><div class="wtxt">'+txt+'</div><div class="wlinks">'+(i===0?'<button type="button" class="vid tmr" data-sec="600" data-sides="0" data-name="'+L.warmT.split(' ·')[0]+'">'+clockIcon+'10\'</button>':'')+links.map(([lab,q])=>'<a class="vid" href="'+Q(q)+'" target="_blank" rel="noopener">'+vidIcon+lab+'</a>').join('')+'</div></div>').join('')+'<div class="wrow"><div class="wtxt" style="color:var(--muted);font-weight:500">'+L.cool+'</div></div>';
  document.getElementById('reset').textContent=L.reset;document.getElementById('logT').textContent=L.logT;document.getElementById('stop').innerHTML=L.stop;
- document.getElementById('rulesT').textContent=L.rulesT;document.getElementById('rules').innerHTML=L.rules.map(r=>'<li>'+r+'</li>').join('');document.getElementById('foot').textContent=L.footer+' · v26 (15/11)';
+ document.getElementById('rulesT').textContent=L.rulesT;document.getElementById('rules').innerHTML=L.rules.map(r=>'<li>'+r+'</li>').join('');document.getElementById('foot').textContent=L.footer+' · v27 (15/11)';
  document.getElementById('skip').textContent=L.end;document.getElementById('snd').setAttribute('aria-label',L.snd);
  document.querySelectorAll('.lbtn').forEach(b=>b.setAttribute('aria-pressed',b.dataset.l===lang?'true':'false'))}
 // Regolazioni delle macchine (posizione delle manopole), salvate per esercizio
@@ -530,9 +530,16 @@ document.getElementById('list').addEventListener('click',ev=>{const x=ev.target.
 document.getElementById('list').addEventListener('click',ev=>{const p=ev.target.closest('.cmap .rg');if(!p)return;const card=p.closest('.ex');const k=p.dataset.r;
  const cap=card.querySelector('.cmap .mcap');cap.innerHTML='<b>'+REG[k][lang==='en'?1:0]+'</b>'});
 render();
-function goToLast(smooth){const cards=[...document.querySelectorAll('#list .ex')];let li=-1;cards.forEach((c,i)=>{if(c.querySelector('.set[aria-pressed="true"]'))li=i});if(li<0)return;let t=cards[li];if(t.classList.contains('complete')){const nx=cards.slice(li+1).find(c=>!c.classList.contains('complete'));if(nx)t=nx}const h=document.querySelector('header').getBoundingClientRect().height;window.scrollTo({top:t.getBoundingClientRect().top+scrollY-h-10,behavior:smooth?'smooth':'auto'})}
-addEventListener('load',()=>setTimeout(()=>goToLast(false),150));
-document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&!document.getElementById('timer').hidden===false)goToLast(true)});
+try{history.scrollRestoration='manual'}catch(e){}
+function markLast(ev){const c=ev.target.closest('#list .ex');if(!c)return;const i=[...document.querySelectorAll('#list .ex')].indexOf(c);store.set('lastEx',{k:todayKey+'-'+P()+cur.day,i})}
+document.addEventListener('click',markLast,true);document.addEventListener('input',markLast,true);
+function goToLast(smooth){const cards=[...document.querySelectorAll('#list .ex')];if(!cards.length)return;let li=-1;cards.forEach((c,i)=>{if(c.querySelector('.set[aria-pressed="true"]'))li=i});
+ const le=store.get('lastEx',null);if(le&&le.k===todayKey+'-'+P()+cur.day&&cards[le.i])li=le.i;
+ if(li<0)return;let t=cards[li];if(t.classList.contains('complete')){const nx=cards.slice(li+1).find(c=>!c.classList.contains('complete'));if(nx)t=nx}
+ const h=document.querySelector('header').getBoundingClientRect().height;window.scrollTo({top:t.getBoundingClientRect().top+scrollY-h-10,behavior:smooth?'smooth':'auto'})}
+addEventListener('load',()=>{setTimeout(()=>goToLast(false),150);setTimeout(()=>goToLast(false),600)});
+addEventListener('pageshow',e=>{if(e.persisted)setTimeout(()=>goToLast(false),150)});
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')setTimeout(()=>goToLast(true),250)});
 </script>
 
 <script>if('serviceWorker' in navigator){addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(()=>{})})}</script>
