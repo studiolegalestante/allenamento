@@ -126,19 +126,19 @@ const F={
  banana:{n:'Banana',k:89,p:1.1,cat:'fresco',shelf:4,dok:'Banane',pack:[120,'pezzo'],u:[120,'banane']},
  cioccolato:{n:'Cioccolato fondente 70%+',k:560,p:8,cat:'disp',dok:'Selex Cioccolato fondente 70% (100 g)',pack:[100,'tavoletta 100 g']},
  barretta:{n:'Barretta proteica (≥20 g prot.)',k:350,p:35,cat:'disp',dok:'Barretta proteica (almeno 20 g di proteine)',pack:[60,'barretta'],u:[60,'barrette']},
- whey:{n:'Whey isolate',k:370,p:85,cat:'disp',dok:'Whey isolate Decathlon (Corength) — non da DOK',pack:[900,'barattolo 900 g'],u:[40,'dosi da 40 g']},
+ whey:{n:'Proteine in polvere',k:370,p:85,cat:'disp',dok:'Proteine in polvere (whey isolate) Decathlon — non da DOK',pack:[900,'barattolo 900 g'],u:[40,'dosi da 40 g']},
  latte:{n:'Latte parzialmente scremato',k:46,p:3.3,cat:'fresco',shelf:7,dok:'Latte parzialmente scremato (1 L)',pack:[1000,'bottiglia 1 L']},
  avena:{n:'Fiocchi d\'avena',k:370,p:13,cat:'disp',dok:'Fiocchi d\'avena (500 g)',pack:[500,'pacco 500 g']},
 };
 // Blocchi: ogni opzione è un elenco di [alimento, grammi]. Il tasto 🔄 Cambia passa all'opzione successiva.
 const B={
  shake:{ic:'🥤',lab:'Shake',o:[
-  {n:'Whey + latte + avena',it:[['whey',40],['latte',300],['avena',40]]},
-  {n:'Whey + latte + banana',it:[['whey',40],['latte',300],['banana',120]]},
-  {n:'Whey in acqua + banana',it:[['whey',40],['banana',120]]}]},
+  {n:'Proteine in polvere + latte + avena',it:[['whey',40],['latte',300],['avena',40]]},
+  {n:'Proteine in polvere + latte + banana',it:[['whey',40],['latte',300],['banana',120]]},
+  {n:'Proteine in polvere in acqua + banana',it:[['whey',40],['banana',120]]}]},
  shakeR:{ic:'🥤',lab:'Shake (quando vuoi)',o:[
-  {n:'Whey + latte',it:[['whey',40],['latte',300]]},
-  {n:'Whey in acqua',it:[['whey',40]]},
+  {n:'Proteine in polvere + latte',it:[['whey',40],['latte',300]]},
+  {n:'Proteine in polvere in acqua',it:[['whey',40]]},
   {n:'Skyr + yogurt greco',it:[['skyr',150],['yogurt',170]]}]},
  pranzo:{ic:'🥣',lab:'Pranzo (facoltativo)',o:[
   {n:'Yogurt greco + frutto + frutta secca',it:[['yogurt',170],['frutto',150],['secca',30]]},
@@ -222,11 +222,11 @@ const COOK2={
  'verd:Verdure surgelate':[['In padella','Dal freezer in padella con coperchio, 10–12 minuti; sale e spezie, l\'olio a crudo alla fine.'],['In friggitrice ad aria','Dal surgelato, 200 °C per 12–15 minuti (le grigliate vengono croccanti).'],['Al microonde','In un contenitore con coperchio, 6–8 minuti alla massima potenza.']],
  'verd:Insalata in busta + pomodorini':[['Pronta','Pomodorini tagliati a metà nell\'insalata; olio del blocco Grassi, sale e limone o aceto.']],
  'verd:Zucchine in padella o in friggitrice':[['In padella','A rondelle, padella calda con coperchio per 8 minuti, poi menta o origano.'],['In friggitrice ad aria','A bastoncini con un filo d\'olio e sale, 200 °C per 12 minuti.'],['Grigliate','Fette per lungo sulla piastra ben calda, 2–3 minuti per lato.']],
- 'shake:Whey + latte + avena':[['Nello shaker','Prima il latte, poi whey e avena; agita 20 secondi. Col frullatore viene più liscio.']],
- 'shake:Whey + latte + banana':[['Nel frullatore','Latte, whey e banana a pezzi, 20 secondi.'],['Nello shaker','Whey e latte nello shaker, la banana a parte.']],
- 'shake:Whey in acqua + banana':[['Nello shaker','300 ml di acqua fredda e la whey, agita 20 secondi; la banana a parte.']],
- 'shakeR:Whey + latte':[['Nello shaker','Prima il latte, poi la whey; agita 20 secondi.']],
- 'shakeR:Whey in acqua':[['Nello shaker','300 ml di acqua fredda e la whey, agita 20 secondi.']],
+ 'shake:Proteine in polvere + latte + avena':[['Nello shaker','Prima il latte, poi la polvere e l\'avena; agita 20 secondi. Col frullatore viene più liscio.']],
+ 'shake:Proteine in polvere + latte + banana':[['Nel frullatore','Latte, polvere e banana a pezzi, 20 secondi.'],['Nello shaker','Polvere e latte nello shaker, la banana a parte.']],
+ 'shake:Proteine in polvere in acqua + banana':[['Nello shaker','300 ml di acqua fredda e la polvere, agita 20 secondi; la banana a parte.']],
+ 'shakeR:Proteine in polvere + latte':[['Nello shaker','Prima il latte, poi la polvere; agita 20 secondi.']],
+ 'shakeR:Proteine in polvere in acqua':[['Nello shaker','300 ml di acqua fredda e la polvere, agita 20 secondi.']],
  'shakeR:Skyr + yogurt greco':[['In ciotola','Mescolati con un pizzico di cannella.']],
  'pranzo:Yogurt greco + frutto + frutta secca':[['In ciotola','Il frutto a pezzi nello yogurt, la frutta secca sopra.']],
  'pranzo:Barretta proteica + frutto':[['Fuori casa','Barretta e frutto in borsa: comodo in giornata piena.']],
@@ -352,7 +352,7 @@ function renderSpesa(){
     h+=`</section>`});
   const dp=Object.keys(week.tot).filter(f=>F[f].cat==='disp');
   h+=`<section class="card" style="--k:var(--muted)"><h2>🟤 Dispensa<small>consumo della settimana · rifornisci quando sta finendo</small></h2>${list(dp,week.tot,week.use,'D')}
-   <h3>Basi della cucina (quando finiscono)</h3><ul><li>Passata di pomodoro, limoni, salsa di soia, aceto.</li><li>Spezie: paprika, origano, rosmarino, aglio in polvere, cumino, cannella.</li><li>Pangrattato e farina (per cotolette e scaloppine).</li></ul><h3>Integratori</h3><ul><li>Whey isolate Decathlon (sopra, nel conteggio).</li><li>Omega-3 con certificazione IFOS: 1 al giorno, a cena.</li><li>Creatina Creapure: solo dopo le analisi con la creatinina.</li><li>Vitamina D: solo dopo averla misurata.</li></ul></section>`;
+   <h3>Basi della cucina (quando finiscono)</h3><ul><li>Passata di pomodoro, limoni, salsa di soia, aceto.</li><li>Spezie: paprika, origano, rosmarino, aglio in polvere, cumino, cannella.</li><li>Pangrattato e farina (per cotolette e scaloppine).</li></ul><h3>Integratori</h3><ul><li>Proteine in polvere (whey isolate) Decathlon: sopra, nel conteggio.</li><li>Omega-3 con certificazione IFOS: 1 al giorno, a cena.</li><li>Creatina Creapure: solo dopo le analisi con la creatinina.</li><li>Vitamina D: solo dopo averla misurata.</li></ul></section>`;
   $('#main').innerHTML=h;
 }
 function list(fs,tot,use,pre){
@@ -379,7 +379,7 @@ function renderInfo(){
    <li>Uova, yogurt, albume, pane in cassetta: tutta la settimana.</li>
    <li>Se un fresco va oltre, l'app lo segnala: freezer il giorno della spesa, scongelamento in frigo la sera prima.</li></ul></section>
   <section class="card"><h2>💊 Integratori</h2><ul>
-   <li>Whey isolate Decathlon, omega-3 IFOS.</li>
+   <li><b>Proteine in polvere (whey):</b> sono le proteine del latte, essiccate e ridotte in polvere. Si sciolgono in acqua o latte e servono ad arrivare alle proteine del giorno senza cucinare. La dose è 40 g: pesala la prima volta, perché il misurino cambia da marca a marca. Quella scelta è la whey isolate Decathlon.</li><li><b>Omega-3:</b> capsule di olio di pesce con certificazione IFOS (garantisce purezza e dosaggio).</li>
    <li>Creatina Creapure e vitamina D: solo dopo le analisi.</li></ul></section>`;
 }
 function render(){document.querySelectorAll('#tabs button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.t===tab));renderDays();
