@@ -39,13 +39,15 @@ h1{font-family:var(--display);font-size:28px;margin:0;text-transform:uppercase;l
 .card h2{font-family:var(--display);font-size:22px;margin:0;text-transform:uppercase;color:var(--k,var(--fg));display:flex;justify-content:space-between;align-items:baseline;gap:8px}
 .card h2 small{font:500 13px var(--body);color:var(--muted);text-transform:none;text-align:right;max-width:45%}
 .badge{display:inline-block;font:700 13px var(--body);padding:3px 8px;border-radius:6px;background:var(--k);color:var(--card)}
-.blk{display:grid;grid-template-columns:28px 1fr auto;gap:8px;align-items:center;border-top:1px solid var(--line);padding-top:8px}
+.blk{display:grid;grid-template-columns:28px 1fr auto;gap:8px;align-items:start;border-top:1px solid var(--line);padding-top:8px}
 .blk:first-of-type{border-top:0;padding-top:0}
 .blk .ic{font-size:20px;text-align:center}
 .blk .what{display:flex;flex-direction:column}
 .blk .lab{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--muted)}
 .blk .nm{font-weight:600}
 .blk .q{font-size:14px;color:var(--muted)}
+.cook{display:block;margin-top:4px;font-size:14px;line-height:1.35;background:var(--bg);border-radius:8px;padding:6px 8px}
+.alt{border:0;background:transparent;color:var(--k,var(--fg));font:700 13px var(--body);padding:2px 0;cursor:pointer;text-decoration:underline}
 .chg{border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:8px;font:600 13px var(--body);padding:6px 8px;min-height:36px;cursor:pointer;white-space:nowrap}
 .tot{display:flex;flex-direction:column;gap:6px}
 .bar{height:10px;border-radius:5px;background:var(--line);overflow:hidden}
@@ -175,6 +177,65 @@ const B={
   {n:'Budino proteico + frutto',it:[['budino',200],['frutto',150]]},
   {n:'Yogurt greco 0% + cioccolato fondente',it:[['yogurt',170],['cioccolato',20]]}]},
 };
+// Come cucinare le proteine: a rotazione (cambia ogni settimana e per giorno), max ~15 minuti. L'olio si prende dal blocco Grassi.
+const COOK={
+ pollo:[['Alla piastra','Fette sottili in padella antiaderente ben calda, 3–4 minuti per lato. Sale, pepe, rosmarino e limone; l\'olio a crudo alla fine.'],
+  ['Bocconcini in friggitrice ad aria','A cubetti con 1 cucchiaino d\'olio, paprika e aglio in polvere. 200 °C per 12 minuti, scuoti il cestello a metà.'],
+  ['Al limone in padella','Fette passate in un velo di farina, 1 cucchiaino d\'olio, 2 minuti per lato; poi il succo di 1 limone e mezzo bicchiere d\'acqua, 5 minuti finché si addensa.'],
+  ['Straccetti con le verdure','A strisce in padella insieme alle verdure surgelate, 10 minuti a fuoco vivace; alla fine un filo di salsa di soia.'],
+  ['Al forno con pomodorini','In teglia con pomodorini, origano e sale. 200 °C per 20 minuti (in friggitrice 180 °C per 15): non devi starci dietro.']],
+ tacchino:[['Alla piastra con salvia','Fette in padella ben calda, 2–3 minuti per lato, con salvia, sale e pepe.'],
+  ['Cotolette in friggitrice ad aria','Fette passate nell\'albume e poi nel pangrattato, uno spruzzo d\'olio. 200 °C per 10 minuti, girandole a metà.'],
+  ['Scaloppine al limone','Velo di farina, 1 cucchiaino d\'olio, 2 minuti per lato, poi succo di limone e un goccio d\'acqua per 3 minuti.'],
+  ['Spiedini in friggitrice ad aria','Cubetti alternati a peperoni o zucchine sugli spiedini, paprika e sale. 200 °C per 12 minuti.']],
+ uova:[['Frittata in padella con verdure','Sbatti uova e albume con sale e pepe, versali sulle verdure già cotte in padella. Coperchio, fuoco basso, 8–10 minuti.'],
+  ['Frittata in friggitrice ad aria','Composto in uno stampo da forno piccolo. 170 °C per 12–14 minuti: gonfia e non si gira.'],
+  ['Strapazzate con pomodorini','In padella antiaderente a fuoco medio, mescolando 4–5 minuti con i pomodorini tagliati a metà ed erba cipollina.'],
+  ['Omelette arrotolata','Metà composto alla volta in padella ampia, 2 minuti per parte; arrotola con bresaola o verdure dentro.']],
+ macinato:[['Polpette in friggitrice ad aria','Impasta con sale, pepe, prezzemolo e un pizzico di aglio in polvere. 200 °C per 12 minuti, girandole a metà.'],
+  ['Hamburger alla piastra','Due hamburger schiacciati a mano, padella ben calda, 4 minuti per lato. Niente salse, al massimo senape.'],
+  ['Saltato con verdure e spezie','In padella senza olio finché si sgrana (5 minuti), poi verdure surgelate, paprika e cumino per altri 7–8 minuti.'],
+  ['Ragù veloce','In padella finché si sgrana, poi 300 g di passata di pomodoro e basilico, 10 minuti. Ottimo con la pasta della sera.']],
+ tonno:[['Insalata fredda','Tonno sgocciolato e ceci con pomodorini, cipolla rossa, prezzemolo e limone. Zero cottura.'],
+  ['Ceci croccanti e tonno','Ceci asciugati in padella o in friggitrice (200 °C, 10 minuti) con paprika, poi aggiungi il tonno a fuoco spento.'],
+  ['Bowl con il carboidrato','Tutto nella stessa ciotola con riso o cous cous, verdure e l\'olio a crudo.']],
+ merluzzo:[['In friggitrice ad aria','Ancora surgelato, con limone, prezzemolo e sale. 190 °C per 14–15 minuti.'],
+  ['In padella con pomodorini','Pomodorini, capperi e un pizzico di aglio in padella, sopra i filetti surgelati. Coperchio, 12 minuti.'],
+  ['Al vapore nel microonde','In un contenitore da microonde con coperchio e un goccio d\'acqua, 6–8 minuti alla massima potenza. Limone e olio a crudo.']],
+ gamberi:[['Aglio e prezzemolo','In padella con 1 cucchiaino d\'olio e uno spicchio d\'aglio, 5–6 minuti dal surgelato; prezzemolo alla fine.'],
+  ['In friggitrice ad aria','Scongelati e asciugati, con paprika e un filo d\'olio. 190 °C per 8 minuti.'],
+  ['Saltati con le verdure','In padella con le verdure surgelate e un filo di salsa di soia, 8 minuti.']],
+ salmone:[['In padella dalla pelle','Padella calda senza olio, 4 minuti dal lato della pelle e 3 dall\'altro. Limone e pepe.'],
+  ['In friggitrice ad aria','Sale, pepe e aneto o erba cipollina. 200 °C per 10 minuti.'],
+  ['Al forno con limone','Fette di limone sopra, 200 °C per 12–14 minuti.']],
+ fredda:[['Piatto freddo','Bresaola con rucola, limone e scaglie (dal blocco Grassi); fiocchi di latte a parte o sopra il pane.']],
+};
+// Preparazione degli altri blocchi, per opzione (chiave blocco:nome)
+const COOK2={
+ 'carb:Pasta':[['Classica','Acqua salata a bollore, cottura come da confezione; condisci con l\'olio del blocco Grassi e le verdure.'],['Finita in padella','Scola 1 minuto prima e termina in padella con le verdure e un mestolo d\'acqua di cottura.'],['Al pomodoro veloce','Passata e basilico in padella per 8 minuti mentre cuoce la pasta.']],
+ 'carb:Riso basmati':[['Bollito','In acqua salata 10–12 minuti, poi scola come la pasta.'],['Ad assorbimento','1 parte di riso e 1,5 di acqua, coperchio, fuoco minimo 12 minuti, poi 5 di riposo.'],['Saltato','Riso già cotto in padella 3 minuti con le verdure e un filo di salsa di soia.']],
+ 'carb:Cous cous o farro':[['Cous cous classico','Stesso peso di acqua bollente salata, coperchio per 5 minuti, poi sgrana con la forchetta e l\'olio.'],['Cous cous freddo','Come il classico, poi lascialo raffreddare con pomodorini, verdure e limone.'],['Farro','Farro perlato in acqua salata, cottura come da confezione (di solito 15 minuti).']],
+ 'carb:Patate':[['In friggitrice ad aria','A spicchi con la buccia, 1 cucchiaino d\'olio e rosmarino. 200 °C per 20 minuti, scuoti a metà.'],['Al microonde','Intere e bucherellate, 8–10 minuti alla massima potenza girandole a metà; poi a pezzi con olio e sale.'],['Lesse','A tocchetti in acqua salata 12–15 minuti, poi olio, prezzemolo e sale.']],
+ 'carb:Gnocchi di patate':[['Bolliti','In acqua salata: si scolano quando salgono a galla (2–3 minuti).'],['In padella','In padella antiaderente con 1 cucchiaino d\'olio, 6–8 minuti finché dorati, poi le verdure.'],['In friggitrice ad aria','Con un filo d\'olio, 200 °C per 12 minuti: croccanti fuori.']],
+ 'carb:Riso basmati pronto in busta':[['Al microonde','Apri un angolo della busta, 2 minuti alla massima potenza.'],['In padella','3 minuti in padella con le verdure e le spezie.']],
+ 'carb:Pane':[['Così com\'è','Pane del giorno o bauletto integrale.'],['Tostato','Tostapane o padella, 2 minuti per lato.']],
+ 'verd:Verdure surgelate':[['In padella','Dal freezer in padella con coperchio, 10–12 minuti; sale e spezie, l\'olio a crudo alla fine.'],['In friggitrice ad aria','Dal surgelato, 200 °C per 12–15 minuti (le grigliate vengono croccanti).'],['Al microonde','In un contenitore con coperchio, 6–8 minuti alla massima potenza.']],
+ 'verd:Insalata in busta + pomodorini':[['Pronta','Pomodorini tagliati a metà nell\'insalata; olio del blocco Grassi, sale e limone o aceto.']],
+ 'verd:Zucchine in padella o in friggitrice':[['In padella','A rondelle, padella calda con coperchio per 8 minuti, poi menta o origano.'],['In friggitrice ad aria','A bastoncini con un filo d\'olio e sale, 200 °C per 12 minuti.'],['Grigliate','Fette per lungo sulla piastra ben calda, 2–3 minuti per lato.']],
+ 'shake:Whey + latte + avena':[['Nello shaker','Prima il latte, poi whey e avena; agita 20 secondi. Col frullatore viene più liscio.']],
+ 'shake:Whey + latte + banana':[['Nel frullatore','Latte, whey e banana a pezzi, 20 secondi.'],['Nello shaker','Whey e latte nello shaker, la banana a parte.']],
+ 'shake:Whey in acqua + banana':[['Nello shaker','300 ml di acqua fredda e la whey, agita 20 secondi; la banana a parte.']],
+ 'shakeR:Whey + latte':[['Nello shaker','Prima il latte, poi la whey; agita 20 secondi.']],
+ 'shakeR:Whey in acqua':[['Nello shaker','300 ml di acqua fredda e la whey, agita 20 secondi.']],
+ 'shakeR:Skyr + yogurt greco':[['In ciotola','Mescolati con un pizzico di cannella.']],
+ 'pranzo:Yogurt greco + frutto + frutta secca':[['In ciotola','Il frutto a pezzi nello yogurt, la frutta secca sopra.']],
+ 'pranzo:Barretta proteica + frutto':[['Fuori casa','Barretta e frutto in borsa: comodo in giornata piena.']],
+ 'pranzo:Pane integrale + bresaola':[['Panino','Due fette di pane integrale con la bresaola, rucola o un filo di limone.']],
+ 'fine:Yogurt greco 0% + frutto':[['In ciotola','Il frutto a pezzi dentro lo yogurt.']],
+ 'fine:Skyr + frutto':[['In ciotola','Il frutto a pezzi dentro lo skyr.']],
+ 'fine:Budino proteico + frutto':[['Pronto','Dal frigo; il frutto a parte.']],
+ 'fine:Yogurt greco 0% + cioccolato fondente':[['In ciotola','Cioccolato a scaglie dentro lo yogurt.']],
+};
 const DOW=['Lun','Mar','Mer','Gio','Ven','Sab','Dom'];
 const DOWL=['Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato','Domenica'];
 const TARGET={tr:{k:2200,p:[170,180]},rest:{k:1900,p:[170,180]}};
@@ -221,6 +282,12 @@ function items(d,b){ // [alimento, grammi] effettivi
   if(b==='grassi'){const p=B.prot.o[selIdx(d,'prot')];if(p.oil)it=[['olio',p.oil]];}
   return it;
 }
+function weekNo(){return Math.floor(new Date(weekKey()+'T00:00:00')/6048e5)}
+function cookKey(d,b){const o=B[b].o[selIdx(d,b)];return b==='prot'?o.id:b+':'+o.n}
+function cookList(d,b){const k=cookKey(d,b);return b==='prot'?COOK[k]:COOK2[k]}
+function cookIdx(d,b){const L=cookList(d,b).length,k=cookKey(d,b);const c=S.cook&&S.cook[d]&&S.cook[d][k];return c==null?(weekNo()+d)%L:c%L}
+function cookLine(d,b){const L=cookList(d,b);if(!L)return '';const [t,x]=L[cookIdx(d,b)];
+  return `<span class="cook">👨‍🍳 <b>${t}</b> — ${x}${L.length>1?` <button class="alt" data-k="${b}">🔄 Altro modo</button>`:''}</span>`}
 function grassiName(d){const p=B.prot.o[selIdx(d,'prot')];return p.oil?'1 cucchiaio d\'olio (c\'è il salmone)':B.grassi.o[selIdx(d,'grassi')].n}
 function nut(it){let k=0,p=0;it.forEach(([f,g])=>{k+=F[f].k*g/100;p+=F[f].p*g/100});return{k,p}}
 function fmtQ(f,g){if(f==='tonno')return Math.round(g/52)+' scatolette da 80 g';if(f==='uova')return Math.round(g/55)+' uova';if(f==='latte')return g+' ml';return g+' g'}
@@ -237,7 +304,7 @@ function renderDays(){
 }
 function blockRow(d,b,label){
   const it=items(d,b);const nm=b==='grassi'?grassiName(d):B[b].o[selIdx(d,b)].n;const can=!(b==='grassi'&&B.prot.o[selIdx(d,'prot')].oil);
-  return `<div class="blk"><div class="ic">${B[b].ic}</div><div class="what"><span class="lab">${label||B[b].lab}</span><span class="nm">${nm}</span><span class="q">${it.length?qText(it):'—'}</span></div>${can?`<button class="chg" data-b="${b}">🔄 Cambia</button>`:''}</div>`;
+  return `<div class="blk"><div class="ic">${B[b].ic}</div><div class="what"><span class="lab">${label||B[b].lab}</span><span class="nm">${nm}</span><span class="q">${it.length?qText(it):'—'}</span>${cookLine(d,b)}</div>${can?`<button class="chg" data-b="${b}">🔄 Cambia</button>`:''}</div>`;
 }
 function renderGiorno(){
   const d=curDay,tp=dayType(d),T=TARGET[tp];const k=isCheat(d)?'var(--cheat)':tp==='tr'?'var(--tr)':'var(--rest)';
@@ -285,7 +352,7 @@ function renderSpesa(){
     h+=`</section>`});
   const dp=Object.keys(week.tot).filter(f=>F[f].cat==='disp');
   h+=`<section class="card" style="--k:var(--muted)"><h2>🟤 Dispensa<small>consumo della settimana · rifornisci quando sta finendo</small></h2>${list(dp,week.tot,week.use,'D')}
-   <h3>Integratori</h3><ul><li>Whey isolate Decathlon (sopra, nel conteggio).</li><li>Omega-3 con certificazione IFOS: 1 al giorno, a cena.</li><li>Creatina Creapure: solo dopo le analisi con la creatinina.</li><li>Vitamina D: solo dopo averla misurata.</li></ul></section>`;
+   <h3>Basi della cucina (quando finiscono)</h3><ul><li>Passata di pomodoro, limoni, salsa di soia, aceto.</li><li>Spezie: paprika, origano, rosmarino, aglio in polvere, cumino, cannella.</li><li>Pangrattato e farina (per cotolette e scaloppine).</li></ul><h3>Integratori</h3><ul><li>Whey isolate Decathlon (sopra, nel conteggio).</li><li>Omega-3 con certificazione IFOS: 1 al giorno, a cena.</li><li>Creatina Creapure: solo dopo le analisi con la creatinina.</li><li>Vitamina D: solo dopo averla misurata.</li></ul></section>`;
   $('#main').innerHTML=h;
 }
 function list(fs,tot,use,pre){
@@ -297,6 +364,7 @@ function renderInfo(){
   $('#main').innerHTML=`
   <section class="card"><h2>🧱 Come funziona</h2><ul>
    <li>Ogni pasto è fatto di blocchi. 🔄 Cambia propone un alimento equivalente (stesse proteine, calorie simili).</li>
+   <li>Sotto ogni blocco trovi 👨‍🍳 come prepararlo; cambia da solo ogni settimana e con 🔄 Altro modo ne scegli un altro.</li>
    <li>Niente ricette: padella, forno, friggitrice ad aria o microonde, al massimo 15 minuti.</li>
    <li>Le verdure sono libere: almeno 300 g a cena.</li>
    <li>Grammature a crudo per pasta, riso e cous cous; il resto come si compra.</li></ul></section>
@@ -324,6 +392,8 @@ document.addEventListener('click',e=>{
   if(t.dataset.d){curDay=+t.dataset.d;render();return}
   if(t.dataset.b){const b=t.dataset.b;S.sel[curDay]=S.sel[curDay]||{};S.sel[curDay][b]=(selIdx(curDay,b)+1)%B[b].o.length;save();render();return}
   if(t.dataset.we){S.we=t.dataset.we;save();render();return}
+  if(t.dataset.k){const b=t.dataset.k,k=cookKey(curDay,b);S.cook=S.cook||{};S.cook[curDay]=S.cook[curDay]||{};S.cook[curDay][k]=cookIdx(curDay,b)+1;save();render();return}
+  if(t.id==='resetDay'){if(S.cook)delete S.cook[curDay];}
   if(t.id==='resetDay'){delete S.sel[curDay];save();render();return}
 });
 document.addEventListener('change',e=>{const c=e.target.dataset&&e.target.dataset.c;if(!c)return;S.chk=S.chk||{};if(e.target.checked)S.chk[c]=1;else delete S.chk[c];save();e.target.closest('.chk').classList.toggle('on',e.target.checked)});
