@@ -1,0 +1,49 @@
+LICENZA COMMERCIALE – Animazioni «Tuzbo»
+VELKIMA – di Vincenzo Stante – versione 16/11/2026
+
+1. Definizioni.
+a) «Titolare»: VELKIMA – di Vincenzo Stante, P. IVA 07973660728.
+b) «Licenziatario»: chi ha acquistato i Video su Gumroad e attiva la presente licenza agendo per scopi professionali o d'impresa.
+c) «Video»: le animazioni «Tuzbo» acquistate, in qualsiasi formato e risoluzione, compresi gli aggiornamenti forniti.
+d) «Progetto»: un solo prodotto o servizio identificato del Licenziatario, cioè una delle seguenti cose: una sede fisica (palestra, studio, centro); un sito web su un dominio; un'app identificata da un codice pacchetto o bundle ID, per tutte le sue piattaforme; un corso o programma di allenamento con il suo titolo; un canale o profilo social.
+e) «Opera Derivata»: il contenuto del Licenziatario in cui i Video sono inseriti insieme ad altri elementi creativi propri (testo, voce, montaggio, grafica, altri esercizi) e non ne costituiscono l'unico o principale valore.
+f) «Cliente Finale»: il committente per cui il Licenziatario realizza un'Opera Derivata (solo Libreria Estesa).
+
+2. Attivazione e conclusione. La licenza si attiva con l'inserimento del codice monouso (OTP) inviato all'indirizzo e-mail usato per l'acquisto e con l'accettazione, anche specifica, delle clausole indicate all'art. 12. Il Titolare conserva data, ora, indirizzo IP, e-mail, numero d'ordine e impronta (SHA-256) del testo accettato. Fino all'attivazione vale soltanto la Licenza Personale.
+
+3. Vendita tramite Gumroad. La vendita avviene su Gumroad, che agisce come rivenditore (merchant of record). Pagamento, fatturazione e rimborsi sono regolati dalle condizioni di Gumroad. La presente licenza regola solo l'uso dei Video.
+
+4. Oggetto. Il Titolare concede al Licenziatario una licenza non esclusiva, non trasferibile e non sublicenziabile di riprodurre, adattare (tagli, ritagli, velocità, sottotitoli, sovrimpressioni, sfondi) e comunicare al pubblico i Video all'interno di Opere Derivate, nei limiti della tipologia acquistata.
+
+5. Tipologie.
+a) Singolo video e Pacchetto: perpetua, per un Progetto.
+b) Libreria Standard: per un Progetto; annuale (con gli esercizi aggiunti durante l'anno) oppure perpetua (solo gli esercizi presenti alla data d'acquisto).
+c) Libreria Estesa: fino a 10 Progetti complessivi, compresi app e contenuti a pagamento; ogni Opera Derivata realizzata per un Cliente Finale vale un Progetto; oltre il decimo Progetto occorre un'ulteriore Libreria Estesa; annuale oppure perpetua, con le stesse regole sugli aggiornamenti.
+
+6. Clienti Finali (solo Libreria Estesa). Il Licenziatario può consegnare al Cliente Finale l'Opera Derivata e il Cliente Finale può usarla per lo scopo per cui è stata commissionata. Il Cliente Finale non riceve i Video come file separati e non può estrarli né riusarli in altri contenuti. Il Licenziatario impone al Cliente Finale per iscritto i divieti dell'art. 8 e risponde delle sue violazioni. Se la licenza è annuale, alla scadenza si applica anche al Cliente Finale l'art. 7.
+
+7. Licenza annuale. Dura 12 mesi dall'acquisto e non si rinnova automaticamente. Alla scadenza, in mancanza di rinnovo:
+a) i Video non possono essere usati in nuove Opere Derivate;
+b) le Opere Derivate a pubblicazione unica (post, video, PDF, corsi registrati) pubblicate durante la validità possono restare online;
+c) i Video usati in modo continuativo in app, siti web, software o schermi devono essere rimossi entro 30 giorni dalla scadenza, compresi gli aggiornamenti dell'app pubblicati dopo tale termine.
+
+8. Divieti. Non è consentito:
+a) rivendere, sublicenziare, noleggiare o distribuire i Video come file, anche in raccolte, banche dati, librerie di asset, template o kit;
+b) usare i Video o il personaggio come elemento principale di prodotti di merchandising, fisici o digitali (abbigliamento, gadget, stampe, adesivi, pacchetti di sticker o GIF, NFT, sfondi, temi);
+c) usare il nome Tuzbo o il personaggio come marchio, logo, mascotte o segno distintivo del Licenziatario o di terzi, o registrare segni simili;
+d) modificare il personaggio snaturandolo o associarlo a contenuti illeciti, diffamatori, sessuali, violenti o politici;
+e) usare i Video, anche tramite terzi, per addestrare, mettere a punto o valutare sistemi di intelligenza artificiale, o per l'estrazione di testo e dati.
+
+9. Riserva sull'estrazione di dati. Il Titolare riserva espressamente i diritti sui Video rispetto all'estrazione di testo e dati, anche nei metadati dei file e in formato leggibile da macchina. Il Licenziatario non rimuove né altera tali metadati né le informazioni sul diritto d'autore.
+
+10. Esclusione e limitazione di responsabilità. I Video hanno scopo dimostrativo e non sostituiscono le indicazioni di un istruttore o di un medico. Il Licenziatario è l'unico responsabile verso i propri utenti e Clienti Finali dell'uso dei Video e delle Opere Derivate, e tiene indenne il Titolare da ogni pretesa di terzi. Salvo dolo o colpa grave, la responsabilità del Titolare non supera il prezzo pagato per la licenza.
+
+11. Violazioni. La violazione degli artt. 5, 6, 7 o 8 risolve la licenza di diritto, con comunicazione del Titolare, senza rimborso e salvo il risarcimento del danno; il Licenziatario rimuove i Video entro 15 giorni.
+
+12. Approvazione specifica. Ai sensi degli artt. 1341 e 1342 c.c. il Licenziatario dichiara di approvare specificamente le seguenti clausole: art. 6 (obblighi verso i Clienti Finali), art. 7.c (rimozione entro 30 giorni), art. 8 (divieti), art. 10 (esclusione e limitazione di responsabilità, manleva), art. 11 (risoluzione senza rimborso), art. 13 (versione delle condizioni), art. 14 (foro esclusivo), art. 15 (lingua).
+
+13. Versione delle condizioni. Si applica la versione in vigore alla data di attivazione. Il Titolare può modificare le condizioni per acquisti e attivazioni successivi. Per le licenze annuali il rinnovo avviene alla versione vigente alla data del rinnovo.
+
+14. Legge e foro. Legge italiana. Per ogni controversia è competente in via esclusiva il Foro di Bari.
+
+15. Lingua. La presente licenza è redatta in lingua italiana. La versione inglese è una traduzione fornita per comodità; in caso di divergenza o di dubbio prevale il testo italiano.

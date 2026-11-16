@@ -1,0 +1,45 @@
+<!DOCTYPE html><html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Attivazione Licenza Commerciale Tuzbo – VELKIMA</title><meta name="robots" content="noindex"><style>body{font-family:Inter,system-ui,sans-serif;max-width:760px;margin:2rem auto;padding:0 1rem;line-height:1.6;color:#111827}h1{font-size:1.4rem;margin-bottom:.2rem}.sub{color:#6b7280;margin-top:0}p{text-align:justify}hr{margin:2.5rem 0;border:0;border-top:2px solid #f97316}</style><style>.box{border:1px solid #ccc;border-radius:8px;padding:1rem;max-height:340px;overflow:auto;white-space:pre-wrap;font-size:.9rem;background:#fafafa}
+label{display:block;margin:.7rem 0 .2rem;font-weight:600}input[type=text],input[type=email],textarea{width:100%;padding:.55rem;border:1px solid #bbb;border-radius:6px;font:inherit;box-sizing:border-box}
+.chk{display:flex;gap:.6rem;align-items:flex-start;margin:.8rem 0;font-weight:400}.chk input{margin-top:.25rem}
+button{margin-top:1rem;padding:.7rem 1.4rem;border:0;border-radius:6px;background:#e8731a;color:#fff;font:inherit;font-weight:700;cursor:pointer}button:disabled{opacity:.5}
+.msg{margin-top:1rem;padding:.7rem;border-radius:6px}.err{background:#fde8e8}.ok{background:#e6f6ea}.hide{display:none}</style></head><body>
+<p class="sub"><a href="licenza.html">↩ Licenze / Licences</a></p>
+<h1>Attivazione Licenza Commerciale «Tuzbo»<br><small>Tuzbo Commercial Licence activation</small></h1>
+<p class="sub">VELKIMA – di Vincenzo Stante – versione 16/11/2026 · <a href="commercial-licence.html" target="_blank">English translation</a> (il testo italiano prevale / the Italian text prevails)</p>
+<div class="box" id="testo">Caricamento… / Loading…</div>
+<form id="f1">
+<label>E-mail usata per l'acquisto / Purchase e-mail</label><input type="email" id="email" required>
+<label>Numero d'ordine Gumroad (dalla ricevuta) / Gumroad order number (from receipt)</label><input type="text" id="ordine" required>
+<label>Denominazione o nome del Licenziatario / Licensee name or company</label><input type="text" id="den" required>
+<label>P. IVA / VAT number</label><input type="text" id="piva">
+<label>Paese / Country</label><input type="text" id="paese">
+<label>Progetti (art. 1.d), uno per riga / Projects (s. 1.d), one per line</label><textarea id="progetti" rows="3" required placeholder="es. Palestra XYZ, via …, Bari · www.esempio.it · app com.esempio.app"></textarea>
+<label class="chk"><input type="checkbox" id="prof" required><span>Dichiaro di agire per scopi professionali o d'impresa (art. 1.b). / I declare that I am acting for professional or business purposes (s. 1.b).</span></label>
+<button id="b1">Invia il codice / Send code</button>
+</form>
+<form id="f2" class="hide">
+<label>Codice ricevuto via e-mail / Code received by e-mail</label><input type="text" id="otp" inputmode="numeric" maxlength="6" required>
+<label class="chk"><input type="checkbox" id="gen" required><span>Ho letto e accetto la Licenza Commerciale (versione 16/11/2026). / I have read and accept the Commercial Licence (version 16 Nov 2026).</span></label>
+<label class="chk"><input type="checkbox" id="spec" required><span>Ai sensi degli artt. 1341 e 1342 c.c. approvo specificamente le clausole: art. 6 (obblighi verso i Clienti Finali), art. 7.c (rimozione entro 30 giorni), art. 8 (divieti), art. 10 (esclusione e limitazione di responsabilità, manleva), art. 11 (risoluzione senza rimborso), art. 13 (versione delle condizioni), art. 14 (foro esclusivo di Bari), art. 15 (lingua). / Pursuant to Articles 1341 and 1342 of the Italian Civil Code I specifically approve sections 6, 7.c, 8, 10, 11, 13, 14 and 15.</span></label>
+<button id="b2">Attiva la licenza / Activate licence</button>
+</form>
+<div id="msg" class="msg hide"></div>
+<script>
+const API='https://script.google.com/macros/s/AKfycbyqo9Z4ijkcPsPz8i8s1nv-JUtpaNsA7re8P_IAVW2QnM68N1wdM8GVBkwmNwF6lrP4eg/exec';
+const $=id=>document.getElementById(id);
+let ip='';fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(j=>ip=j.ip).catch(()=>{});
+fetch('licenze/LICENZA-COMMERCIALE-IT.txt').then(r=>r.text()).then(t=>$('testo').textContent=t);
+function msg(t,ok){const m=$('msg');m.textContent=t;m.className='msg '+(ok?'ok':'err');}
+async function call(o){const r=await fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(o)});return r.json();}
+const base=()=>({email:$('email').value,ordine:$('ordine').value});
+$('f1').onsubmit=async e=>{e.preventDefault();$('b1').disabled=true;msg('Verifica in corso… / Checking…',true);
+ try{const r=await call({azione:'richiedi',...base()});
+ if(r.ok){msg('Codice inviato a '+$('email').value+' (valido 10 minuti). / Code sent (valid for 10 minutes).',true);$('f2').classList.remove('hide');['email','ordine'].forEach(i=>$(i).readOnly=true);}
+ else{msg(r.errore,false);$('b1').disabled=false;}}catch(x){msg('Errore di rete / Network error',false);$('b1').disabled=false;}};
+$('f2').onsubmit=async e=>{e.preventDefault();$('b2').disabled=true;
+ try{const r=await call({azione:'conferma',...base(),otp:$('otp').value,denominazione:$('den').value,piva:$('piva').value,paese:$('paese').value,progetti:$('progetti').value,
+ professionista:$('prof').checked,generale:$('gen').checked,specifica:$('spec').checked,ip,ua:navigator.userAgent});
+ if(r.ok){msg('Licenza Commerciale attivata. Ti abbiamo inviato una e-mail di conferma con il testo accettato. / Commercial Licence activated. A confirmation e-mail with the accepted text has been sent.',true);$('f1').classList.add('hide');$('f2').classList.add('hide');}
+ else{msg(r.errore,false);$('b2').disabled=false;}}catch(x){msg('Errore di rete / Network error',false);$('b2').disabled=false;}};
+</script>
+</body></html>
