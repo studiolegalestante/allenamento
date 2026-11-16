@@ -67,6 +67,14 @@ h3{font:700 13px var(--body);text-transform:uppercase;letter-spacing:.4px;color:
 .seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
 .seg button{border:0;background:var(--card);color:var(--muted);font:600 14px var(--body);padding:6px 10px;min-height:36px;cursor:pointer}
 .seg button[aria-pressed="true"]{background:var(--fg);color:var(--bg)}
+
+.term{border:0;background:transparent;color:inherit;font:inherit;padding:0;cursor:pointer;text-decoration:underline dotted;text-underline-offset:3px;text-decoration-thickness:2px}
+.term::after{content:"ⓘ";font-size:.75em;margin-left:1px;vertical-align:super;opacity:.7}
+#gl[hidden]{display:none}
+#gl{position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.35);display:flex;align-items:flex-end;justify-content:center}
+#gl .box{background:var(--card);color:var(--fg);width:100%;max-width:560px;border-radius:16px 16px 0 0;padding:16px 18px calc(16px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:8px}
+#gl b{font-family:var(--display);font-size:22px;text-transform:uppercase}
+#gl p{margin:0}
 footer{font-size:12px;color:var(--muted);text-align:center}
 button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(--fg);outline-offset:2px}
 </style>
@@ -86,6 +94,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(-
   <div class="days" role="group" id="days"></div>
 </header>
 <main id="main" class="wrap" style="gap:14px"></main>
+<div id="gl" hidden><div class="box" role="dialog" aria-live="polite"><b></b><p></p><button type="button" class="chg" onclick="this.closest('#gl').hidden=true">Chiudi</button></div></div>
 <footer>Indicazioni generali per uso personale: non sostituiscono il parere del medico o del nutrizionista.</footer>
 </div>
 
@@ -126,19 +135,19 @@ const F={
  banana:{n:'Banana',k:89,p:1.1,cat:'fresco',shelf:4,dok:'Banane',pack:[120,'pezzo'],u:[120,'banane']},
  cioccolato:{n:'Cioccolato fondente 70%+',k:560,p:8,cat:'disp',dok:'Selex Cioccolato fondente 70% (100 g)',pack:[100,'tavoletta 100 g']},
  barretta:{n:'Barretta proteica (≥20 g prot.)',k:350,p:35,cat:'disp',dok:'Barretta proteica (almeno 20 g di proteine)',pack:[60,'barretta'],u:[60,'barrette']},
- whey:{n:'Proteine in polvere',k:370,p:85,cat:'disp',dok:'Proteine in polvere (whey isolate) Decathlon — non da DOK',pack:[900,'barattolo 900 g'],u:[40,'dosi da 40 g']},
+ whey:{n:'Whey',k:370,p:85,cat:'disp',dok:'Whey isolate Decathlon — non da DOK',pack:[900,'barattolo 900 g'],u:[40,'dosi da 40 g']},
  latte:{n:'Latte parzialmente scremato',k:46,p:3.3,cat:'fresco',shelf:7,dok:'Latte parzialmente scremato (1 L)',pack:[1000,'bottiglia 1 L']},
  avena:{n:'Fiocchi d\'avena',k:370,p:13,cat:'disp',dok:'Fiocchi d\'avena (500 g)',pack:[500,'pacco 500 g']},
 };
 // Blocchi: ogni opzione è un elenco di [alimento, grammi]. Il tasto 🔄 Cambia passa all'opzione successiva.
 const B={
  shake:{ic:'🥤',lab:'Shake',o:[
-  {n:'Proteine in polvere + latte + avena',it:[['whey',40],['latte',300],['avena',40]]},
-  {n:'Proteine in polvere + latte + banana',it:[['whey',40],['latte',300],['banana',120]]},
-  {n:'Proteine in polvere in acqua + banana',it:[['whey',40],['banana',120]]}]},
+  {n:'Whey + latte + avena',it:[['whey',40],['latte',300],['avena',40]]},
+  {n:'Whey + latte + banana',it:[['whey',40],['latte',300],['banana',120]]},
+  {n:'Whey in acqua + banana',it:[['whey',40],['banana',120]]}]},
  shakeR:{ic:'🥤',lab:'Shake (quando vuoi)',o:[
-  {n:'Proteine in polvere + latte',it:[['whey',40],['latte',300]]},
-  {n:'Proteine in polvere in acqua',it:[['whey',40]]},
+  {n:'Whey + latte',it:[['whey',40],['latte',300]]},
+  {n:'Whey in acqua',it:[['whey',40]]},
   {n:'Skyr + yogurt greco',it:[['skyr',150],['yogurt',170]]}]},
  pranzo:{ic:'🥣',lab:'Pranzo (facoltativo)',o:[
   {n:'Yogurt greco + frutto + frutta secca',it:[['yogurt',170],['frutto',150],['secca',30]]},
@@ -222,11 +231,11 @@ const COOK2={
  'verd:Verdure surgelate':[['In padella','Dal freezer in padella con coperchio, 10–12 minuti; sale e spezie, l\'olio a crudo alla fine.'],['In friggitrice ad aria','Dal surgelato, 200 °C per 12–15 minuti (le grigliate vengono croccanti).'],['Al microonde','In un contenitore con coperchio, 6–8 minuti alla massima potenza.']],
  'verd:Insalata in busta + pomodorini':[['Pronta','Pomodorini tagliati a metà nell\'insalata; olio del blocco Grassi, sale e limone o aceto.']],
  'verd:Zucchine in padella o in friggitrice':[['In padella','A rondelle, padella calda con coperchio per 8 minuti, poi menta o origano.'],['In friggitrice ad aria','A bastoncini con un filo d\'olio e sale, 200 °C per 12 minuti.'],['Grigliate','Fette per lungo sulla piastra ben calda, 2–3 minuti per lato.']],
- 'shake:Proteine in polvere + latte + avena':[['Nello shaker','Prima il latte, poi la polvere e l\'avena; agita 20 secondi. Col frullatore viene più liscio.']],
- 'shake:Proteine in polvere + latte + banana':[['Nel frullatore','Latte, polvere e banana a pezzi, 20 secondi.'],['Nello shaker','Polvere e latte nello shaker, la banana a parte.']],
- 'shake:Proteine in polvere in acqua + banana':[['Nello shaker','300 ml di acqua fredda e la polvere, agita 20 secondi; la banana a parte.']],
- 'shakeR:Proteine in polvere + latte':[['Nello shaker','Prima il latte, poi la polvere; agita 20 secondi.']],
- 'shakeR:Proteine in polvere in acqua':[['Nello shaker','300 ml di acqua fredda e la polvere, agita 20 secondi.']],
+ 'shake:Whey + latte + avena':[['Nello shaker','Prima il latte, poi la whey e l\'avena; agita 20 secondi. Col frullatore viene più liscio.']],
+ 'shake:Whey + latte + banana':[['Nel frullatore','Latte, whey e banana a pezzi, 20 secondi.'],['Nello shaker','Whey e latte nello shaker, la banana a parte.']],
+ 'shake:Whey in acqua + banana':[['Nello shaker','300 ml di acqua fredda e la whey, agita 20 secondi; la banana a parte.']],
+ 'shakeR:Whey + latte':[['Nello shaker','Prima il latte, poi la whey; agita 20 secondi.']],
+ 'shakeR:Whey in acqua':[['Nello shaker','300 ml di acqua fredda e la whey, agita 20 secondi.']],
  'shakeR:Skyr + yogurt greco':[['In ciotola','Mescolati con un pizzico di cannella.']],
  'pranzo:Yogurt greco + frutto + frutta secca':[['In ciotola','Il frutto a pezzi nello yogurt, la frutta secca sopra.']],
  'pranzo:Barretta proteica + frutto':[['Fuori casa','Barretta e frutto in borsa: comodo in giornata piena.']],
@@ -235,6 +244,42 @@ const COOK2={
  'fine:Skyr + frutto':[['In ciotola','Il frutto a pezzi dentro lo skyr.']],
  'fine:Budino proteico + frutto':[['Pronto','Dal frigo; il frutto a parte.']],
  'fine:Yogurt greco 0% + cioccolato fondente':[['In ciotola','Cioccolato a scaglie dentro lo yogurt.']],
+};
+// Glossario: i termini specifici diventano cliccabili ovunque compaiano (prima occorrenza per scheda)
+const GLOSS={
+ 'whey':'Proteine del siero di latte, il liquido che resta quando si fa il formaggio, filtrate ed essiccate in polvere. Si sciolgono in acqua o latte. "Isolate" è la versione più pura, quasi senza lattosio. Non è una marca: lo trovi scritto su tutte le confezioni.',
+ 'skyr':'Latticino islandese, simile a uno yogurt molto denso: magro e ricco di proteine (circa 11 g ogni 100 g). Sta nel banco frigo vicino agli yogurt.',
+ 'yogurt greco':'Yogurt filtrato: più denso e con quasi il doppio delle proteine di uno yogurt normale. "0%" o "magro" vuol dire senza grassi.',
+ 'albume':'Il bianco dell\'uovo. In brick lo trovi già separato e pastorizzato nel banco frigo; si usa come le uova, per frittate e strapazzate.',
+ 'fiocchi di latte':'Formaggio fresco magro a granelli, in vasetto: tante proteine e pochi grassi.',
+ 'bresaola':'Carne di manzo salata e stagionata, affettata: molto magra e ricca di proteine.',
+ 'budino proteico':'Budino pronto con proteine aggiunte (circa 20 g a vasetto). Banco frigo.',
+ 'barretta proteica':'Barretta con proteine aggiunte: sceglila con almeno 20 g di proteine, si legge in etichetta.',
+ 'cous cous':'Semola di grano duro in granelli già precotti: basta acqua bollente e 5 minuti di riposo.',
+ 'farro':'Cereale antico simile all\'orzo. Il "perlato" cuoce più in fretta.',
+ 'basmati':'Riso a chicco lungo e profumato, che non scuoce.',
+ 'friggitrice ad aria':'Elettrodomestico che cuoce con aria molto calda: risultato croccante con pochissimo olio.',
+ 'omega-3':'Grassi "buoni" dell\'olio di pesce, presi in capsule.',
+ 'ifos':'Certificazione internazionale che controlla la purezza (per esempio i metalli pesanti) e il dosaggio reale degli omega-3.',
+ 'creatina':'Integratore molto studiato che aiuta forza e massa muscolare. Si prende solo dopo aver controllato i reni con le analisi (creatinina).',
+ 'creapure':'Marchio tedesco di creatina ad alta purezza: è una garanzia di qualità.',
+ 'vitamina d':'Vitamina che il corpo produce con il sole. Si integra solo se le analisi dicono che è bassa.',
+ 'kcal':'Chilocalorie: l\'energia che dà un cibo. Nel linguaggio comune si dice "calorie".',
+ 'selex':'Marca del supermercato (marchio del distributore) di DOK, Famila, A&O e altre catene: stessa qualità, prezzo più basso.',
+ 'sashimi':'Fettine di pesce crudo, senza riso: la scelta più leggera al sushi.',
+ 'nigiri':'Polpettina di riso con una fetta di pesce sopra.',
+ 'poke':'Ciotola con riso, pesce crudo e verdure.',
+ 'tempura':'Frittura in pastella leggera: buona ma calorica.',
+ 'uramaki':'Rotolini di sushi con il riso all\'esterno; quelli fritti o con salse sono i più calorici.',
+ 'piastra':'Padella liscia o rigata, in ghisa o antiaderente, per cuocere senza olio.',
+ 'salsa di soia':'Condimento orientale molto salato: ne basta un filo.',
+ 'cumino':'Spezia dal sapore caldo, tipica della cucina messicana e mediorientale.',
+ 'erba cipollina':'Erba aromatica dal sapore di cipolla delicata.',
+ 'aneto':'Erba aromatica dal sapore fresco, perfetta col salmone.',
+ 'fondente':'Cioccolato con almeno il 70% di cacao: meno zucchero, più gusto.',
+ 'bauletto':'Pane in cassetta: dura tutta la settimana.',
+ 'sgocciolat':'Peso senza il liquido di conservazione.',
+ 'shaker':'Borraccia con coperchio e griglia interna per sciogliere la whey agitando.',
 };
 const DOW=['Lun','Mar','Mer','Gio','Ven','Sab','Dom'];
 const DOWL=['Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato','Domenica'];
@@ -352,7 +397,7 @@ function renderSpesa(){
     h+=`</section>`});
   const dp=Object.keys(week.tot).filter(f=>F[f].cat==='disp');
   h+=`<section class="card" style="--k:var(--muted)"><h2>🟤 Dispensa<small>consumo della settimana · rifornisci quando sta finendo</small></h2>${list(dp,week.tot,week.use,'D')}
-   <h3>Basi della cucina (quando finiscono)</h3><ul><li>Passata di pomodoro, limoni, salsa di soia, aceto.</li><li>Spezie: paprika, origano, rosmarino, aglio in polvere, cumino, cannella.</li><li>Pangrattato e farina (per cotolette e scaloppine).</li></ul><h3>Integratori</h3><ul><li>Proteine in polvere (whey isolate) Decathlon: sopra, nel conteggio.</li><li>Omega-3 con certificazione IFOS: 1 al giorno, a cena.</li><li>Creatina Creapure: solo dopo le analisi con la creatinina.</li><li>Vitamina D: solo dopo averla misurata.</li></ul></section>`;
+   <h3>Basi della cucina (quando finiscono)</h3><ul><li>Passata di pomodoro, limoni, salsa di soia, aceto.</li><li>Spezie: paprika, origano, rosmarino, aglio in polvere, cumino, cannella.</li><li>Pangrattato e farina (per cotolette e scaloppine).</li></ul><h3>Integratori</h3><ul><li>Whey isolate Decathlon: sopra, nel conteggio.</li><li>Omega-3 con certificazione IFOS: 1 al giorno, a cena.</li><li>Creatina Creapure: solo dopo le analisi con la creatinina.</li><li>Vitamina D: solo dopo averla misurata.</li></ul></section>`;
   $('#main').innerHTML=h;
 }
 function list(fs,tot,use,pre){
@@ -364,6 +409,7 @@ function renderInfo(){
   $('#main').innerHTML=`
   <section class="card"><h2>🧱 Come funziona</h2><ul>
    <li>Ogni pasto è fatto di blocchi. 🔄 Cambia propone un alimento equivalente (stesse proteine, calorie simili).</li>
+   <li>Le parole sottolineate a puntini con ⓘ si toccano per la spiegazione.</li>
    <li>Sotto ogni blocco trovi 👨‍🍳 come prepararlo; cambia da solo ogni settimana e con 🔄 Altro modo ne scegli un altro.</li>
    <li>Niente ricette: padella, forno, friggitrice ad aria o microonde, al massimo 15 minuti.</li>
    <li>Le verdure sono libere: almeno 300 g a cena.</li>
@@ -379,15 +425,30 @@ function renderInfo(){
    <li>Uova, yogurt, albume, pane in cassetta: tutta la settimana.</li>
    <li>Se un fresco va oltre, l'app lo segnala: freezer il giorno della spesa, scongelamento in frigo la sera prima.</li></ul></section>
   <section class="card"><h2>💊 Integratori</h2><ul>
-   <li><b>Proteine in polvere (whey):</b> sono le proteine del latte, essiccate e ridotte in polvere. Si sciolgono in acqua o latte e servono ad arrivare alle proteine del giorno senza cucinare. La dose è 40 g: pesala la prima volta, perché il misurino cambia da marca a marca. Quella scelta è la whey isolate Decathlon.</li><li><b>Omega-3:</b> capsule di olio di pesce con certificazione IFOS (garantisce purezza e dosaggio).</li>
+   <li>Whey isolate Decathlon, omega-3 IFOS.</li>
    <li>Creatina Creapure e vitamina D: solo dopo le analisi.</li></ul></section>`;
 }
 function render(){document.querySelectorAll('#tabs button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.t===tab));renderDays();
-  if(tab==='giorno')renderGiorno();else if(tab==='spesa')renderSpesa();else renderInfo()}
+  if(tab==='giorno')renderGiorno();else if(tab==='spesa')renderSpesa();else renderInfo();linkTerms(document.getElementById('main'))}
+
+
+/* ===== Glossario cliccabile ===== */
+const GKEYS=Object.keys(GLOSS).sort((a,b)=>b.length-a.length);
+const GRE=new RegExp('(?<![\\p{L}])('+GKEYS.map(k=>k.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|')+')','giu');
+function linkTerms(root){root.querySelectorAll('.card').forEach(card=>{const seen=new Set();
+  const w=document.createTreeWalker(card,NodeFilter.SHOW_TEXT,{acceptNode:n=>n.parentElement.closest('button,.term,label input')?NodeFilter.FILTER_REJECT:NodeFilter.FILTER_ACCEPT});
+  const nodes=[];while(w.nextNode())nodes.push(w.currentNode);
+  nodes.forEach(n=>{const t=n.nodeValue;GRE.lastIndex=0;let m,last=0,frag=null;
+   while((m=GRE.exec(t))){const k=m[1].toLowerCase();if(seen.has(k))continue;seen.add(k);frag=frag||document.createDocumentFragment();
+    frag.append(t.slice(last,m.index));const b=document.createElement('button');b.type='button';b.className='term';b.dataset.g=k;b.textContent=m[1];frag.append(b);last=m.index+m[1].length}
+   if(frag){frag.append(t.slice(last));n.replaceWith(frag)}})})}
+function showGloss(k){const g=document.getElementById('gl');g.querySelector('b').textContent=k.charAt(0).toUpperCase()+k.slice(1).replace(/^Sgocciolat$/,'Sgocciolato');g.querySelector('p').textContent=GLOSS[k];g.hidden=false}
 
 /* ===== Eventi ===== */
 document.addEventListener('click',e=>{
+  const gl=document.getElementById('gl');if(!gl.hidden&&!e.target.closest('#gl .box')){gl.hidden=true;if(!e.target.closest('.term'))return}
   const t=e.target.closest('button');if(!t)return;
+  if(t.dataset.g){e.preventDefault();showGloss(t.dataset.g);return}
   if(t.dataset.t){tab=t.dataset.t;render();scrollTo(0,0);return}
   if(t.dataset.d){curDay=+t.dataset.d;render();return}
   if(t.dataset.b){const b=t.dataset.b;S.sel[curDay]=S.sel[curDay]||{};S.sel[curDay][b]=(selIdx(curDay,b)+1)%B[b].o.length;save();render();return}
