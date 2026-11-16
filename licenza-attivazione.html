@@ -2,17 +2,18 @@
 label{display:block;margin:.7rem 0 .2rem;font-weight:600}input[type=text],input[type=email],textarea{width:100%;padding:.55rem;border:1px solid #bbb;border-radius:6px;font:inherit;box-sizing:border-box}
 .chk{display:flex;gap:.6rem;align-items:flex-start;margin:.8rem 0;font-weight:400}.chk input{margin-top:.25rem}
 button{margin-top:1rem;padding:.7rem 1.4rem;border:0;border-radius:6px;background:#e8731a;color:#fff;font:inherit;font-weight:700;cursor:pointer}button:disabled{opacity:.5}
-.msg{margin-top:1rem;padding:.7rem;border-radius:6px}.err{background:#fde8e8}.ok{background:#e6f6ea}.hide{display:none}</style></head><body>
+.msg{margin-top:1rem;padding:.7rem;border-radius:6px}.err{background:#fde8e8}.ok{background:#e6f6ea}.hide{display:none}.obbl{font-size:.9em;font-style:italic;margin:0 0 .8em}</style></head><body>
 <p class="sub"><a href="licenza.html">↩ Licenze / Licences</a></p>
 <h1>Attivazione Licenza Commerciale «Tuzbo»<br><small>Tuzbo Commercial Licence activation</small></h1>
 <p class="sub">VELKIMA – di Vincenzo Stante – versione 16/11/2026 · <a href="commercial-licence.html" target="_blank">English translation</a> (il testo italiano prevale / the Italian text prevails)</p>
 <div class="box" id="testo">Caricamento… / Loading…</div>
 <form id="f1">
+<p class="obbl">Tutti i campi sono obbligatori. / All fields are required.</p>
 <label>E-mail usata per l'acquisto / Purchase e-mail</label><input type="email" id="email" required>
 <label>Numero d'ordine Gumroad (dalla ricevuta) / Gumroad order number (from receipt)</label><input type="text" id="ordine" required>
 <label>Denominazione o nome del Licenziatario / Licensee name or company</label><input type="text" id="den" required>
-<label>P. IVA / VAT number</label><input type="text" id="piva">
-<label>Paese / Country</label><input type="text" id="paese">
+<label>P. IVA / VAT number</label><input type="text" id="piva" required>
+<label>Paese / Country</label><input type="text" id="paese" required>
 <label>Progetti (art. 1.d), uno per riga / Projects (s. 1.d), one per line</label><textarea id="progetti" rows="3" required placeholder="es. Palestra XYZ, via …, Bari · www.esempio.it · app com.esempio.app"></textarea>
 <label class="chk"><input type="checkbox" id="prof" required><span>Dichiaro di agire per scopi professionali o d'impresa (art. 1.b). / I declare that I am acting for professional or business purposes (s. 1.b).</span></label>
 <button id="b1">Invia il codice / Send code</button>
