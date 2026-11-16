@@ -1,8 +1,8 @@
 // Allenamento — service worker: uso offline.
 // Pagina: prima la rete (così gli aggiornamenti arrivano subito), poi la copia salvata.
 // Font e icone: copia salvata, aggiornata in background.
-const CACHE = 'allenamento-v28';
-const CORE = ['./', 'index.html', 'manifest.webmanifest', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/icon-maskable-512.png'];
+const CACHE = 'allenamento-v29';
+const CORE = ['./', 'index.html', 'alimentazione.html', 'manifest.webmanifest', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/icon-maskable-512.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(CORE)).then(() => self.skipWaiting()));
@@ -24,8 +24,8 @@ self.addEventListener('fetch', e => {
   if (req.mode === 'navigate') {
     e.respondWith(
       fetch(req)
-        .then(res => { const copy = res.clone(); caches.open(CACHE).then(c => c.put('index.html', copy)); return res; })
-        .catch(() => caches.match('index.html'))
+        .then(res => { const copy = res.clone(); caches.open(CACHE).then(c => c.put(req, copy)); return res; })
+        .catch(() => caches.match(req, {ignoreSearch: true}).then(r => r || caches.match('index.html')))
     );
     return;
   }
