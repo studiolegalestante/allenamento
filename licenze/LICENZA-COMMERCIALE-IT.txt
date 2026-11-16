@@ -5,20 +5,19 @@ VELKIMA – di Vincenzo Stante – versione 16/11/2026
 a) «Titolare»: VELKIMA – di Vincenzo Stante, P. IVA 07973660728.
 b) «Licenziatario»: chi ha acquistato i Video su Gumroad e attiva la presente licenza agendo per scopi professionali o d'impresa.
 c) «Video»: le animazioni «Tuzbo» acquistate, in qualsiasi formato e risoluzione, compresi gli aggiornamenti forniti.
-d) «Progetto»: un solo prodotto o servizio identificato del Licenziatario, cioè una delle seguenti cose: una sede fisica (palestra, studio, centro); un sito web su un dominio; un'app identificata da un codice pacchetto o bundle ID, per tutte le sue piattaforme; un corso o programma di allenamento con il suo titolo; un canale o profilo social.
+d) «Progetto»: un solo prodotto o servizio identificato del Licenziatario, cioè una delle seguenti cose: una sede fisica (palestra, studio, centro); un sito web su un dominio; un'app identificata da un codice pacchetto o bundle ID, per tutte le sue piattaforme; un corso o programma di allenamento con il suo titolo; un canale o profilo social. La Libreria Standard copre 1 Progetto; la Libreria Estesa fino a 10 Progetti (art. 5).
 e) «Opera Derivata»: il contenuto del Licenziatario in cui i Video sono inseriti insieme ad altri elementi creativi propri (testo, voce, montaggio, grafica, altri esercizi) e non ne costituiscono l'unico o principale valore.
 f) «Cliente Finale»: il committente per cui il Licenziatario realizza un'Opera Derivata (solo Libreria Estesa).
 
-2. Attivazione e conclusione. La licenza si attiva con l'inserimento del codice monouso (OTP) inviato all'indirizzo e-mail usato per l'acquisto e con l'accettazione, anche specifica, delle clausole indicate all'art. 12. Il Titolare conserva data, ora, indirizzo IP, e-mail, numero d'ordine e impronta (SHA-256) del testo accettato. Fino all'attivazione vale soltanto la Licenza Personale.
+2. Attivazione e conclusione. La licenza si attiva con l'inserimento del codice monouso (OTP) inviato all'indirizzo e-mail usato per l'acquisto e con l'accettazione, anche specifica, delle clausole indicate all'art. 12. Il Titolare conserva data, ora, indirizzo IP, e-mail, identificativo dell'acquisto su Gumroad e impronta (SHA-256) del testo accettato. Fino all'attivazione vale soltanto la Licenza Personale.
 
 3. Vendita tramite Gumroad. La vendita avviene su Gumroad, che agisce come rivenditore (merchant of record). Pagamento, fatturazione e rimborsi sono regolati dalle condizioni di Gumroad. La presente licenza regola solo l'uso dei Video.
 
 4. Oggetto. Il Titolare concede al Licenziatario una licenza non esclusiva, non trasferibile e non sublicenziabile di riprodurre, adattare (tagli, ritagli, velocità, sottotitoli, sovrimpressioni, sfondi) e comunicare al pubblico i Video all'interno di Opere Derivate, nei limiti della tipologia acquistata.
 
 5. Tipologie.
-a) Singolo video e Pacchetto: perpetua, per un Progetto.
-b) Libreria Standard: per un Progetto; annuale (con gli esercizi aggiunti durante l'anno) oppure perpetua (solo gli esercizi presenti alla data d'acquisto).
-c) Libreria Estesa: fino a 10 Progetti complessivi, compresi app e contenuti a pagamento; ogni Opera Derivata realizzata per un Cliente Finale vale un Progetto; oltre il decimo Progetto occorre un'ulteriore Libreria Estesa; annuale oppure perpetua, con le stesse regole sugli aggiornamenti.
+a) Libreria Standard: per un Progetto; annuale (con gli esercizi aggiunti durante l'anno) oppure perpetua (solo gli esercizi presenti alla data d'acquisto).
+b) Libreria Estesa: fino a 10 Progetti complessivi, compresi app e contenuti a pagamento; ogni Opera Derivata realizzata per un Cliente Finale vale un Progetto; oltre il decimo Progetto occorre un'ulteriore Libreria Estesa; annuale oppure perpetua, con le stesse regole sugli aggiornamenti.
 
 6. Clienti Finali (solo Libreria Estesa). Il Licenziatario può consegnare al Cliente Finale l'Opera Derivata e il Cliente Finale può usarla per lo scopo per cui è stata commissionata. Il Cliente Finale non riceve i Video come file separati e non può estrarli né riusarli in altri contenuti. Il Licenziatario impone al Cliente Finale per iscritto i divieti dell'art. 8 e risponde delle sue violazioni. Se la licenza è annuale, alla scadenza si applica anche al Cliente Finale l'art. 7.
 
