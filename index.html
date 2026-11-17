@@ -282,7 +282,7 @@ function applyStatic(){const L=t();document.documentElement.lang=lang;document.g
  document.querySelectorAll('.mbtn').forEach(b=>{b.textContent=SH[b.dataset.mode];b.title=L[b.dataset.mode];b.setAttribute('aria-label',L[b.dataset.mode])});
  document.getElementById('warm').innerHTML='<h2>'+L.warmT+'</h2><p>'+L.warmS+'</p>'+({A:[0,1,3,2],B:[0,4,7,2],C:[0,4,5,6],D:[0,1,2]}[cur.day]||[0,1,2,3]).map(i=>[L.warm[i],i]).map(([[txt,links],i])=>'<div class="wrow"><div class="wtxt">'+txt+'</div><div class="wlinks">'+(i===0?'<button type="button" class="vid tmr" data-sec="600" data-sides="0" data-name="'+L.warmT.split(' ·')[0]+'">'+clockIcon+'10\'</button>':'')+links.map(([lab,q])=>'<a class="vid" href="'+Q(q)+'" target="_blank" rel="noopener">'+vidIcon+lab+'</a>').join('')+'</div></div>').join('')+'<div class="wrow"><div class="wtxt" style="color:var(--muted);font-weight:500">'+L.cool+'</div></div>';
  document.getElementById('reset').textContent=L.reset;document.getElementById('logT').textContent=L.logT;document.getElementById('stop').innerHTML=L.stop;
- document.getElementById('rulesT').textContent=L.rulesT;document.getElementById('rules').innerHTML=L.rules.map(r=>'<li>'+r+'</li>').join('');document.getElementById('foot').textContent=L.footer+' · v35 (16/11)';
+ document.getElementById('rulesT').textContent=L.rulesT;document.getElementById('rules').innerHTML=L.rules.map(r=>'<li>'+r+'</li>').join('');document.getElementById('foot').textContent=L.footer+' · v36 (17/11)';
  document.getElementById('skip').textContent=L.end;document.getElementById('snd').setAttribute('aria-label',L.snd);
  document.querySelectorAll('.lbtn').forEach(b=>b.setAttribute('aria-pressed',b.dataset.l===lang?'true':'false'))}
 // Regolazioni delle macchine (posizione delle manopole), salvate per esercizio
@@ -326,7 +326,7 @@ function render(){const L=t();applyStatic();
   const lv=s=>{const x=lastSets[s]??(last&&!last.sets?last.v:undefined);return x?fmtN(conv(num(x),last.u||'kg')):''};
   for(let s=0;s<n;s++){
    h+='<div class="sc"><button type="button" class="set" data-id="'+id+'" data-s="'+s+'" aria-pressed="'+(ds[s]?'true':'false')+'" aria-label="'+L.set+' '+(s+1)+'">'+(s+1)+'</button>';
-   if(weighted)h+='<input class="w" id="kg-'+id+'-'+s+'" inputmode="decimal" data-id="'+id+'" data-s="'+s+'" value="'+lv(s)+'" placeholder="'+(sn?sw(s):unit)+'" aria-label="'+L.setW+' '+(s+1)+' ('+unit+')">';
+   if(weighted)h+='<input class="w" maxlength="5" id="kg-'+id+'-'+s+'" inputmode="decimal" data-id="'+id+'" data-s="'+s+'" value="'+lv(s)+'" placeholder="'+(sn?sw(s):unit)+'" aria-label="'+L.setW+' '+(s+1)+' ('+unit+')">';
    h+='</div>';
   }
   h+='</div>';
@@ -352,6 +352,8 @@ document.getElementById('list').addEventListener('click',ev=>{
  const card=b.closest('.ex');const n=card.querySelectorAll('.set').length;card.classList.toggle('complete',arr.filter(Boolean).length>=n);updProg();
  if(arr[s]){const D=cur.day==='D';const fin=arr.filter(Boolean).length>=n;let nx=null;if(fin){let c=card.nextElementSibling;while(c&&c.classList.contains('complete'))c=c.nextElementSibling;nx=c&&c.dataset.name}startTimer(fin?(D?45:90):(D?30:75),fin?(nx?(lang==='en'?'next: ':'prossimo: ')+nx:(lang==='en'?'workout done':'allenamento finito')):card.dataset.name)}
 });
+document.getElementById('list').addEventListener('input',ev=>{const inp=ev.target.closest('input.w');if(!inp)return;
+ let v=inp.value.replace(/[^\d.,]/g,'');const m=v.match(/^(\d{0,3})\d*([.,]?)(\d?)/);v=m?m[1]+(m[1]&&m[2]?m[2]+m[3]:''):'';if(v!==inp.value)inp.value=v});
 document.getElementById('list').addEventListener('change',ev=>{const inp=ev.target.closest('input.w');if(!inp)return;const kgs=store.get('kg',{});const id=inp.dataset.id;
  const card=inp.closest('.ex');const vals=[...card.querySelectorAll('input.w')].map(i=>i.value.trim().replace(',','.'));
  if(vals.some(Boolean)){const prev=kgs[id]||{};const same=prev.u===unit||!prev.u;kgs[id]={sets:vals.map((v,s)=>v||(same&&prev.sets?prev.sets[s]:'')||''),u:unit,d:todayKey}}else delete kgs[id];store.set('kg',kgs);logSession()});
@@ -438,12 +440,12 @@ document.getElementById('skip').addEventListener('click',()=>{tNext=null;documen
 const MT={it:{title:'Mappa dei muscoli',sub:'Colorati i muscoli allenati oggi: pieno = muscolo principale di almeno un esercizio, chiaro = solo secondario. Tocca un muscolo o un nome per vedere quali esercizi lo lavorano.',front:'Fronte',back:'Retro',fsub:'visto di fronte',bsub:'visto da dietro',close:'Chiudi',all:'Tutti i muscoli di oggi',onBody:'Vedi sul corpo',prim:'= muscolo principale · sul corpo: pieno = principale, chiaro = secondario',none:'Nessun esercizio di oggi lo lavora',ex:'Esercizio',worked:'Lavorato da'},
 en:{title:'Muscle map',sub:'Muscles trained today are coloured: solid = main muscle of at least one exercise, light = secondary only. Tap a muscle or a name to see which exercises work it.',front:'Front',back:'Back',fsub:'seen from the front',bsub:'seen from behind',close:'Close',all:'All of today\'s muscles',onBody:'Show on body',prim:'= main muscle · on the body: solid = main, light = secondary',none:'No exercise today works it',ex:'Exercise',worked:'Worked by'}};
 const REG={pett:['Pettorale','Pectorals'],deltA:['Deltoide anteriore','Front deltoid'],deltL:['Deltoide laterale','Lateral deltoid'],deltP:['Deltoide posteriore','Rear deltoid'],
-bic:['Bicipite e brachiale','Biceps & brachialis'],tric:['Tricipite','Triceps'],avam:['Avambraccio','Forearm'],abs:['Retto addominale e trasverso','Rectus abdominis & transversus'],obl:['Obliqui','Obliques'],dent:['Dentato anteriore','Serratus anterior'],
+bic:['Bicipite e brachiale','Biceps & brachialis'],tric:['Tricipite','Triceps'],avam:['Avambraccio','Forearm'],abs:['Retto addominale','Rectus abdominis'],tra:['Trasverso dell\'addome (profondo, a fascia)','Transversus abdominis (deep, belt-like)'],obl:['Obliqui','Obliques'],dent:['Dentato anteriore','Serratus anterior'],
 trap:['Trapezio','Trapezius'],romb:['Romboidi','Rhomboids'],cuff:['Cuffia dei rotatori','Rotator cuff'],lat:['Gran dorsale','Latissimus dorsi'],lomb:['Erettori spinali e lombari','Spinal erectors & lower back'],
 glut:['Grande gluteo','Gluteus maximus'],glmed:['Medio gluteo e rotatori anca','Gluteus medius & hip rotators'],flex:["Flessori dell'anca (ileopsoas)",'Hip flexors (iliopsoas)'],quad:['Quadricipite','Quadriceps'],fem:['Femorali','Hamstrings'],polp:['Polpaccio','Calves']};
 const KW=[[/deltoide anteriore|front deltoid/,['deltA']],[/deltoide laterale|lateral deltoid/,['deltL']],[/deltoide posteriore|rear deltoid/,['deltP']],[/^deltoid|^spall|^shoulder/,['deltA','deltL','deltP']],
 [/pettoral|pectoral/,['pett']],[/bicip|bicep|brachial/,['bic']],[/tricip|tricep/,['tric']],[/avambracc|forearm/,['avam']],[/obliq/,['obl']],[/dentato|serratus/,['dent']],
-[/retto femorale|rectus femoris|ileopsoas|iliopsoas|flessori|hip flexor/,['flex']],[/retto addom|rectus abd|^addom|^abs|^core|deep core|transvers/,['abs']],[/trapezio superiore|upper trapez/,['trap']],[/trapez/,['trap']],[/romboid|rhomboid/,['romb']],[/cuffia|rotator cuff/,['cuff']],
+[/retto femorale|rectus femoris|ileopsoas|iliopsoas|flessori|hip flexor/,['flex']],[/trasvers|transvers|profond|deep core/,['tra']],[/retto addom|rectus abd|^addom|^abs|^core/,['abs']],[/trapezio superiore|upper trapez/,['trap']],[/trapez/,['trap']],[/romboid|rhomboid/,['romb']],[/cuffia|rotator cuff/,['cuff']],
 [/dorsale|latissimus/,['lat']],[/erettori|erector|lomb|lumbor|colonna|spine/,['lomb']],[/grande gluteo|gluteus maximus|^glute[io]/,['glut']],[/medio gluteo|gluteus medius|piriform|rotatori dell'anca|hip rotator/,['glmed']],
 [/quadric|quadricep/,['quad']],[/femoral|hamstring/,['fem']],[/^gambe|^legs/,['quad','fem','glut']],[/polpacc|calves|calf|soleo|soleus|gastrocn/,['polp']]];
 function regsOfStr(m){const x=m.toLowerCase().trim();for(const [re,rs] of KW){if(re.test(x))return rs}return []}
@@ -467,6 +469,7 @@ function svgFig(side){const sym=(d)=>d+'<g transform="translate(200,0) scale(-1,
   m+=sym(r('dent','<path d="M74 98 L84 102 L82 122 L72 116 Z"/>'));
   m+=sym(r('obl','<path d="M86 108 L76 124 C76 150 78 172 86 192 L89 188 L89 110 Z"/>'));
   m+=r('abs','<rect x="90" y="104" width="20" height="86" rx="6"/>');
+  m+=r('tra','<rect x="78" y="168" width="44" height="18" rx="9" stroke-dasharray="3 2"/>');
   m+=sym(r('flex','<path d="M86 198 L97 214 L94 226 L84 214 Z"/>'));
   m+=sym(r('quad','<ellipse cx="82" cy="266" rx="14" ry="38"/>'));
   m+=sym(r('polp','<ellipse cx="78" cy="336" rx="5" ry="22"/>'));
