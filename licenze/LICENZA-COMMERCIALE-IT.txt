@@ -11,7 +11,7 @@ f) «Cliente Finale»: il committente per cui il Licenziatario realizza un'Opera
 
 2. Attivazione e conclusione. Il Licenziatario accetta la presente licenza, anche specificamente per le clausole indicate all'art. 12, inserendo il codice monouso (OTP) inviato al proprio indirizzo e-mail. La licenza produce effetti dal pagamento del prezzo della Libreria su Gumroad con lo stesso indirizzo e-mail. Il Titolare conserva data, ora, indirizzo IP, e-mail, identificativo dell'acquisto su Gumroad e impronta (SHA-256) del testo accettato. Chi acquista la Libreria senza aver attivato la licenza con lo stesso indirizzo e-mail ha soltanto la Licenza Personale, fino all'attivazione.
 
-3. Vendita tramite Gumroad. La vendita avviene su Gumroad, che agisce come rivenditore (merchant of record). Pagamento, fatturazione e rimborsi sono regolati dalle condizioni di Gumroad. La presente licenza regola solo l'uso dei Video.
+3. Vendita tramite Gumroad. La vendita avviene su Gumroad, che agisce come rivenditore (merchant of record). Pagamento, fatturazione e rimborsi sono regolati dalle condizioni di Gumroad. La presente licenza regola solo l'uso dei Video. L'ordine a prezzo zero della Sottoscrizione (Sottoscrizione Libreria Standard o Sottoscrizione Libreria Estesa) serve solo a sottoscrivere la presente licenza: non è un acquisto, non dà diritto ai Video e non fa sorgere alcun obbligo di pagamento.
 
 4. Oggetto. Il Titolare concede al Licenziatario una licenza non esclusiva, non trasferibile e non sublicenziabile di riprodurre, adattare (tagli, ritagli, velocità, sottotitoli, sovrimpressioni, sfondi) e comunicare al pubblico i Video all'interno di Opere Derivate, nei limiti della tipologia acquistata.
 
