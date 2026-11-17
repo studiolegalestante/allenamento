@@ -10,18 +10,17 @@ button{margin-top:1rem;padding:.7rem 1.4rem;border:0;border-radius:6px;backgroun
 <form id="f1">
 <p class="obbl">Tutti i campi sono obbligatori. / All fields are required.</p>
 <label>E-mail usata per l'acquisto / Purchase e-mail</label><input type="email" id="email" required>
-<label>Numero d'ordine Gumroad (dalla ricevuta) / Gumroad order number (from receipt)</label><input type="text" id="ordine" required>
 <label>Denominazione o nome del Licenziatario / Licensee name or company</label><input type="text" id="den" required>
 <label>P. IVA o codice fiscale / VAT number or tax ID</label><input type="text" id="piva" required>
 <label>Paese / Country</label><input type="text" id="paese" required>
 <label>Progetti (art. 1.d), uno per riga / Projects (s. 1.d), one per line</label><textarea id="progetti" rows="3" required placeholder="es. Palestra XYZ, via …, Bari · www.esempio.it · app com.esempio.app"></textarea>
 <label class="chk"><input type="checkbox" id="prof" required><span>Dichiaro di agire per scopi professionali o d'impresa (art. 1.b). / I declare that I am acting for professional or business purposes (s. 1.b).</span></label>
+<label class="chk"><input type="checkbox" id="gen" required><span>Ho letto e accetto la Licenza Commerciale (versione 16/11/2026). / I have read and accept the Commercial Licence (version 16 Nov 2026).</span></label>
+<label class="chk"><input type="checkbox" id="spec" required><span>Ai sensi degli artt. 1341 e 1342 c.c. approvo specificamente le clausole: art. 6 (obblighi verso i Clienti Finali), art. 7.c (rimozione entro 30 giorni), art. 8 (divieti), art. 10 (esclusione e limitazione di responsabilità, manleva), art. 11 (risoluzione senza rimborso), art. 13 (versione delle condizioni), art. 14 (foro esclusivo di Bari), art. 15 (lingua). / Pursuant to Articles 1341 and 1342 of the Italian Civil Code I specifically approve sections 6, 7.c, 8, 10, 11, 13, 14 and 15.</span></label>
 <button id="b1">Invia il codice / Send code</button>
 </form>
 <form id="f2" class="hide">
 <label>Codice ricevuto via e-mail / Code received by e-mail</label><input type="text" id="otp" inputmode="numeric" maxlength="6" required>
-<label class="chk"><input type="checkbox" id="gen" required><span>Ho letto e accetto la Licenza Commerciale (versione 16/11/2026). / I have read and accept the Commercial Licence (version 16 Nov 2026).</span></label>
-<label class="chk"><input type="checkbox" id="spec" required><span>Ai sensi degli artt. 1341 e 1342 c.c. approvo specificamente le clausole: art. 6 (obblighi verso i Clienti Finali), art. 7.c (rimozione entro 30 giorni), art. 8 (divieti), art. 10 (esclusione e limitazione di responsabilità, manleva), art. 11 (risoluzione senza rimborso), art. 13 (versione delle condizioni), art. 14 (foro esclusivo di Bari), art. 15 (lingua). / Pursuant to Articles 1341 and 1342 of the Italian Civil Code I specifically approve sections 6, 7.c, 8, 10, 11, 13, 14 and 15.</span></label>
 <button id="b2">Attiva la licenza / Activate licence</button>
 </form>
 <div id="msg" class="msg hide"></div>
@@ -32,15 +31,15 @@ let ip='';fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(j=>i
 fetch('licenze/LICENZA-COMMERCIALE-IT.txt').then(r=>r.text()).then(t=>$('testo').textContent=t);
 function msg(t,ok){const m=$('msg');m.textContent=t;m.className='msg '+(ok?'ok':'err');}
 async function call(o){const r=await fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(o)});return r.json();}
-const base=()=>({email:$('email').value,ordine:$('ordine').value});
+const base=()=>({email:$('email').value});
+const dati=()=>({denominazione:$('den').value,piva:$('piva').value,paese:$('paese').value,progetti:$('progetti').value,professionista:$('prof').checked,generale:$('gen').checked,specifica:$('spec').checked,ip,ua:navigator.userAgent});
 $('f1').onsubmit=async e=>{e.preventDefault();$('b1').disabled=true;msg('Verifica in corso… / Checking…',true);
- try{const r=await call({azione:'richiedi',...base()});
- if(r.ok){msg('Codice inviato a '+$('email').value+' (valido 10 minuti). / Code sent (valid for 10 minutes).',true);$('f2').classList.remove('hide');['email','ordine'].forEach(i=>$(i).readOnly=true);}
+ try{const r=await call({azione:'richiedi',...base(),...dati()});
+ if(r.ok){msg('Codice inviato a '+$('email').value+' (valido 10 minuti). / Code sent (valid for 10 minutes).',true);$('f2').classList.remove('hide');$('f1').querySelectorAll('input,textarea,button').forEach(i=>i.disabled=true);}
  else{msg(r.errore,false);$('b1').disabled=false;}}catch(x){msg('Errore di rete / Network error',false);$('b1').disabled=false;}};
 $('f2').onsubmit=async e=>{e.preventDefault();$('b2').disabled=true;
- try{const r=await call({azione:'conferma',...base(),otp:$('otp').value,denominazione:$('den').value,piva:$('piva').value,paese:$('paese').value,progetti:$('progetti').value,
- professionista:$('prof').checked,generale:$('gen').checked,specifica:$('spec').checked,ip,ua:navigator.userAgent});
- if(r.ok){msg('Licenza Commerciale attivata. Ti abbiamo inviato una e-mail di conferma con il testo accettato. / Commercial Licence activated. A confirmation e-mail with the accepted text has been sent.',true);$('f1').classList.add('hide');$('f2').classList.add('hide');}
+ try{const r=await call({azione:'conferma',...base(),otp:$('otp').value});
+ if(r.ok){const m=$('msg');m.className='msg ok';m.innerHTML='Licenza Commerciale attivata. Ti abbiamo inviato una e-mail di conferma con il testo accettato e il link. / Commercial Licence activated. A confirmation e-mail with the accepted text and the link has been sent.<br><br><a href="'+r.link+'" style="font-weight:700">Scarica le animazioni / Download the animations</a><br><small>Si apre un ordine a 0 € su Gumroad; i file restano nella tua libreria Gumroad. / It opens a €0 order on Gumroad; the files then stay in your Gumroad library.</small>';$('f1').classList.add('hide');$('f2').classList.add('hide');}
  else{msg(r.errore,false);$('b2').disabled=false;}}catch(x){msg('Errore di rete / Network error',false);$('b2').disabled=false;}};
 </script>
 </body></html>
