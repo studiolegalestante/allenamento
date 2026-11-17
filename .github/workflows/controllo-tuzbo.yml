@@ -1,0 +1,10 @@
+name: Controllo acquisti Tuzbo senza attivazione
+on:
+  schedule:
+    - cron: '7 8 * * *'
+  workflow_dispatch:
+jobs:
+  controllo:
+    runs-on: ubuntu-latest
+    steps:
+      - run: curl -sSL "https://script.google.com/macros/s/AKfycbyqo9Z4ijkcPsPz8i8s1nv-JUtpaNsA7re8P_IAVW2QnM68N1wdM8GVBkwmNwF6lrP4eg/exec?controllo=1"

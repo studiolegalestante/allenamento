@@ -1,15 +1,15 @@
 LICENZA COMMERCIALE – Animazioni «Tuzbo»
-VELKIMA – di Vincenzo Stante – versione 16/11/2026
+VELKIMA – di Vincenzo Stante – versione 17/11/2026
 
 1. Definizioni.
 a) «Titolare»: VELKIMA – di Vincenzo Stante, P. IVA 07973660728.
-b) «Licenziatario»: chi ha acquistato i Video su Gumroad e attiva la presente licenza agendo per scopi professionali o d'impresa.
+b) «Licenziatario»: chi attiva la presente licenza e acquista la Libreria su Gumroad, agendo per scopi professionali o d'impresa.
 c) «Video»: le animazioni «Tuzbo» acquistate, in qualsiasi formato e risoluzione, compresi gli aggiornamenti forniti.
 d) «Progetto»: un solo prodotto o servizio identificato del Licenziatario, cioè una delle seguenti cose: una sede fisica (palestra, studio, centro); un sito web su un dominio; un'app identificata da un codice pacchetto o bundle ID, per tutte le sue piattaforme; un corso o programma di allenamento con il suo titolo; un canale o profilo social. La Libreria Standard copre 1 Progetto; la Libreria Estesa fino a 10 Progetti (art. 5).
 e) «Opera Derivata»: il contenuto del Licenziatario in cui i Video sono inseriti insieme ad altri elementi creativi propri (testo, voce, montaggio, grafica, altri esercizi) e non ne costituiscono l'unico o principale valore.
 f) «Cliente Finale»: il committente per cui il Licenziatario realizza un'Opera Derivata (solo Libreria Estesa).
 
-2. Attivazione e conclusione. La licenza si attiva con l'inserimento del codice monouso (OTP) inviato all'indirizzo e-mail usato per l'acquisto e con l'accettazione, anche specifica, delle clausole indicate all'art. 12. Il Titolare conserva data, ora, indirizzo IP, e-mail, identificativo dell'acquisto su Gumroad e impronta (SHA-256) del testo accettato. Fino all'attivazione vale soltanto la Licenza Personale.
+2. Attivazione e conclusione. Il Licenziatario accetta la presente licenza, anche specificamente per le clausole indicate all'art. 12, inserendo il codice monouso (OTP) inviato al proprio indirizzo e-mail. La licenza produce effetti dal pagamento del prezzo della Libreria su Gumroad con lo stesso indirizzo e-mail. Il Titolare conserva data, ora, indirizzo IP, e-mail, identificativo dell'acquisto su Gumroad e impronta (SHA-256) del testo accettato. Chi acquista la Libreria senza aver attivato la licenza con lo stesso indirizzo e-mail ha soltanto la Licenza Personale, fino all'attivazione.
 
 3. Vendita tramite Gumroad. La vendita avviene su Gumroad, che agisce come rivenditore (merchant of record). Pagamento, fatturazione e rimborsi sono regolati dalle condizioni di Gumroad. La presente licenza regola solo l'uso dei Video.
 

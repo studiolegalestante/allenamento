@@ -5,9 +5,10 @@ button{margin-top:1rem;padding:.7rem 1.4rem;border:0;border-radius:6px;backgroun
 .msg{margin-top:1rem;padding:.7rem;border-radius:6px}.err{background:#fde8e8}.ok{background:#e6f6ea}.hide{display:none}.obbl{font-size:.9em;font-style:italic;margin:0 0 .8em}</style></head><body>
 <p class="sub"><a href="licenza.html">↩ Licenze / Licences</a></p>
 <h1>Attivazione Licenza Commerciale «Tuzbo»<br><small>Tuzbo Commercial Licence activation</small></h1>
-<p class="sub">VELKIMA – di Vincenzo Stante – versione 16/11/2026 · <a href="commercial-licence.html" target="_blank">English translation</a> (il testo italiano prevale / the Italian text prevails)</p>
+<p class="sub">VELKIMA – di Vincenzo Stante – versione 17/11/2026 · <a href="commercial-licence.html" target="_blank">English translation</a> (il testo italiano prevale / the Italian text prevails)</p>
 <div class="box" id="testo">Caricamento… / Loading…</div>
 <form id="f1">
+<p class="obbl">L'ordine a 0 € su Gumroad non è un acquisto e non dà diritti sulle animazioni: serve solo a sottoscrivere la licenza. Dopo l'attivazione riceverai il link per acquistare la Libreria. / The €0 order on Gumroad is not a purchase and grants no rights to the animations: it is only used to sign up for the licence. After activation you will receive the link to buy the Library.</p>
 <p class="obbl">Tutti i campi sono obbligatori. / All fields are required.</p>
 <label>E-mail usata per l'acquisto / Purchase e-mail</label><input type="email" id="email" required>
 <label>Denominazione o nome del Licenziatario / Licensee name or company</label><input type="text" id="den" required>
@@ -15,7 +16,7 @@ button{margin-top:1rem;padding:.7rem 1.4rem;border:0;border-radius:6px;backgroun
 <label>Paese / Country</label><input type="text" id="paese" required>
 <label>Progetti (art. 1.d), uno per riga / Projects (s. 1.d), one per line</label><textarea id="progetti" rows="3" required placeholder="es. Palestra XYZ, via …, Bari · www.esempio.it · app com.esempio.app"></textarea>
 <label class="chk"><input type="checkbox" id="prof" required><span>Dichiaro di agire per scopi professionali o d'impresa (art. 1.b). / I declare that I am acting for professional or business purposes (s. 1.b).</span></label>
-<label class="chk"><input type="checkbox" id="gen" required><span>Ho letto e accetto la Licenza Commerciale (versione 16/11/2026). / I have read and accept the Commercial Licence (version 16 Nov 2026).</span></label>
+<label class="chk"><input type="checkbox" id="gen" required><span>Ho letto e accetto la Licenza Commerciale (versione 17/11/2026). / I have read and accept the Commercial Licence (version 17 Nov 2026).</span></label>
 <label class="chk"><input type="checkbox" id="spec" required><span>Ai sensi degli artt. 1341 e 1342 c.c. approvo specificamente le clausole: art. 6 (obblighi verso i Clienti Finali), art. 7.c (rimozione entro 30 giorni), art. 8 (divieti), art. 10 (esclusione e limitazione di responsabilità, manleva), art. 11 (risoluzione senza rimborso), art. 13 (versione delle condizioni), art. 14 (foro esclusivo di Bari), art. 15 (lingua). / Pursuant to Articles 1341 and 1342 of the Italian Civil Code I specifically approve sections 6, 7.c, 8, 10, 11, 13, 14 and 15.</span></label>
 <button id="b1">Invia il codice / Send code</button>
 </form>
@@ -39,7 +40,7 @@ $('f1').onsubmit=async e=>{e.preventDefault();$('b1').disabled=true;msg('Verific
  else{msg(r.errore,false);$('b1').disabled=false;}}catch(x){msg('Errore di rete / Network error',false);$('b1').disabled=false;}};
 $('f2').onsubmit=async e=>{e.preventDefault();$('b2').disabled=true;
  try{const r=await call({azione:'conferma',...base(),otp:$('otp').value});
- if(r.ok){const m=$('msg');m.className='msg ok';m.innerHTML='Licenza Commerciale attivata. Ti abbiamo inviato una e-mail di conferma con il testo accettato e il link. / Commercial Licence activated. A confirmation e-mail with the accepted text and the link has been sent.<br><br><a href="'+r.link+'" style="font-weight:700">Scarica le animazioni / Download the animations</a><br><small>Si apre un ordine a 0 € su Gumroad; i file restano nella tua libreria Gumroad. / It opens a €0 order on Gumroad; the files then stay in your Gumroad library.</small>';$('f1').classList.add('hide');$('f2').classList.add('hide');}
+ if(r.ok){const m=$('msg');m.className='msg ok';m.innerHTML='Licenza Commerciale accettata. Ti abbiamo inviato una e-mail con il testo accettato e il link. Ora acquista la Libreria <b>con lo stesso indirizzo e-mail</b>: la licenza produce effetti dal pagamento. / Commercial Licence accepted. An e-mail with the accepted text and the link has been sent. Now buy the Library <b>with the same e-mail address</b>: the licence takes effect upon payment.<br><br><a href="'+r.link+'" style="font-weight:700">Acquista la Libreria / Buy the Library</a>';$('f1').classList.add('hide');$('f2').classList.add('hide');}
  else{msg(r.errore,false);$('b2').disabled=false;}}catch(x){msg('Errore di rete / Network error',false);$('b2').disabled=false;}};
 </script>
 </body></html>
