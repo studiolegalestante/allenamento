@@ -84,7 +84,7 @@ details ul{margin:8px 0 0;padding-left:18px;display:flex;flex-direction:column;g
 .timer button{background:var(--bg);color:var(--fg);border:0;border-radius:10px;padding:10px 14px;font:700 14px var(--body);min-height:44px;cursor:pointer}
 .bar{position:absolute;left:0;top:0;height:4px;background:var(--done);transition:width 1s linear}
 a.wl{color:var(--d);font-weight:700;text-decoration:none;white-space:nowrap}
-.alts{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:8px;font-size:13px;color:var(--muted)} .altb{background:transparent;border:1px dashed var(--line);border-radius:8px;color:var(--fg);font:600 13px var(--body);padding:6px 9px;min-height:34px;cursor:pointer} .warm{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:10px}
+.wt{font-weight:700;color:var(--fg);background:var(--line);border-radius:6px;padding:1px 6px;margin-left:4px;white-space:nowrap} .alts{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:8px;font-size:13px;color:var(--muted)} .altb{background:transparent;border:1px dashed var(--line);border-radius:8px;color:var(--fg);font:600 13px var(--body);padding:6px 9px;min-height:34px;cursor:pointer} .warm{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:10px}
 .warm h2{font-family:var(--display);font-size:22px;margin:0;text-transform:uppercase}
 .warm p{margin:-6px 0 0;color:var(--muted);font-size:14px}
 .wrow{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:10px}
@@ -272,6 +272,7 @@ function fmtSug(x){x=String(x);if(/^\d+([.,]\d+)?$/.test(x))return fmtN(conv(num
 const repsT=r=>r.replace('/L',t().side);
 function durOf(reps){const m=reps.match(/(\d+)(?:–(\d+))?(["'])/);if(!m)return null;const v=+(m[2]||m[1]);return{sec:m[3]=='"'?v:v*60,sides:/\/L/.test(reps),label:v+m[3]}}
 const clockIcon='<svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 4.5V8l2.5 1.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>';
+const WT={"panca":"man","croci":"man","spinte":"man","spinte_muro":"man","laterali":"man","squeeze":"man","rem_prono":"man","post_incl":"man","post_prono":"man","yraise":"man","curl":"man","curl_panca":"man","panca_incl":"man","stepup":"man","affondi":"man","kickback":"uno","rematore":"uno","pullover":"uno","ponte_man":"uno","boxsquat":"uno","goblet":"uno","vbench":"lato","incl_m":"lato","lowrow":"lato","lat_m":"lato","legpress45":"lato","croci_cavo":"cavo2","lat":"pacco","chest_press":"pacco","shoulder_m":"pacco","pushdown":"pacco","pulley":"pacco","facepull":"pacco","legpress":"pacco","legext":"pacco","legext1":"pacco","legcurl1":"pacco","polp_lp":"pacco","reardelt":"pacco","lat_cavo":"pacco","kickback_cavo":"pacco","curl_cavo":"pacco","addabd":"pacco"};const WTL={"it":{"man":"per manubrio (ne usi due)","uno":"un solo manubrio","lato":"dischi per lato","cavo2":"per ciascun cavo","pacco":"pacco pesi, totale"},"en":{"man":"per dumbbell (you use two)","uno":"one dumbbell","lato":"plates per side","cavo2":"per cable","pacco":"weight stack, total"}};const wtl=sl=>WT[sl]?' <span class="wt">'+WTL[lang][WT[sl]]+'</span>':'';
 const SUBS={"vbench":["panca","chest_press"],"incl_m":["panca_incl"],"croci_cavo":["croci","squeeze"],"lat_cavo":["laterali"],"pushdown":["kickback_cavo","kickback"],"lowrow":["pulley","rem_prono"],"lat_m":["lat"],"facepull":["reardelt","post_incl"],"curl_cavo":["curl"],"legpress":["legpress45"],"legext1":["stepup"],"legcurl1":["ponte1"],"addabd":["clam"],"polp_lp":["polpacci"]};
 const swapKey=()=>'swap-'+todayKey;
 function exList(day){const base=day==='D'?DAYD:DAYSET[cur.mode][day];const abs=(ABS[day]||[]).map(([s,r])=>[s,r,true]);const sw=store.get(swapKey(),{});return base.concat(abs).map(([s,r,a],i)=>{const n=sw[day+i];return n&&n!==s?[n,r,a,s]:[s,r,a,s]})}
@@ -285,7 +286,7 @@ function applyStatic(){const L=t();document.documentElement.lang=lang;document.g
  document.querySelectorAll('.mbtn').forEach(b=>{b.textContent=SH[b.dataset.mode];b.title=L[b.dataset.mode];b.setAttribute('aria-label',L[b.dataset.mode])});
  document.getElementById('warm').innerHTML='<h2>'+L.warmT+'</h2><p>'+L.warmS+'</p>'+({A:[0,1,3,2],B:[0,4,7,2],C:[0,4,5,6],D:[0,1,2]}[cur.day]||[0,1,2,3]).map(i=>[L.warm[i],i]).map(([[txt,links],i])=>'<div class="wrow"><div class="wtxt">'+txt+'</div><div class="wlinks">'+(i===0?'<button type="button" class="vid tmr" data-sec="600" data-sides="0" data-name="'+L.warmT.split(' ·')[0]+'">'+clockIcon+'10\'</button>':'')+links.map(([lab,q])=>'<a class="vid" href="'+Q(q)+'" target="_blank" rel="noopener">'+vidIcon+lab+'</a>').join('')+'</div></div>').join('')+'<div class="wrow"><div class="wtxt" style="color:var(--muted);font-weight:500">'+L.cool+'</div></div>';
  document.getElementById('reset').textContent=L.reset;document.getElementById('logT').textContent=L.logT;document.getElementById('stop').innerHTML=L.stop;
- document.getElementById('rulesT').textContent=L.rulesT;document.getElementById('rules').innerHTML=L.rules.map(r=>'<li>'+r+'</li>').join('');document.getElementById('foot').textContent=L.footer+' · v39 (26/11)';
+ document.getElementById('rulesT').textContent=L.rulesT;document.getElementById('rules').innerHTML=L.rules.map(r=>'<li>'+r+'</li>').join('');document.getElementById('foot').textContent=L.footer+' · v40 (26/11)';
  document.getElementById('skip').textContent=L.end;document.getElementById('snd').setAttribute('aria-label',L.snd);
  document.querySelectorAll('.lbtn').forEach(b=>b.setAttribute('aria-pressed',b.dataset.l===lang?'true':'false'))}
 // Regolazioni delle macchine (posizione delle manopole), salvate per esercizio
@@ -325,7 +326,7 @@ function render(){const L=t();applyStatic();
   const ds=done[id]||[];
   const weighted=kg&&kg.some(x=>x!==CL);
   const sug0=kg?kg[info.week-1]:null;const sn=sug0&&/^\d+([.,]\d+)?$/.test(sug0)?conv(num(sug0),'kg'):null;const ramp=pmode==='up'&&sn&&n===4&&day!=='D';
-  const sw=s=>dec(rnd1(sn*(ramp?RAMP[s]:1)));
+  const sw=s=>{const v=sn*(ramp?RAMP[s]:1);return dec(WT[slug]==='lato'&&unit==='kg'?Math.max(2.5,Math.round(v/2.5)*2.5):rnd1(v))};
   const last=weighted?kgs[id]:null;const lastSets=last?(last.sets||[last.v]):[];
   const lv=s=>{const x=lastSets[s]??(last&&!last.sets?last.v:undefined);return x?fmtN(conv(num(x),last.u||'kg')):''};
   for(let s=0;s<n;s++){
@@ -336,7 +337,7 @@ function render(){const L=t();applyStatic();
   h+='</div>';
   card.dataset.name=name;
   if(weighted){
-   h+='<div class="kg"><span class="sugg">'+L.sug+': <b>'+(sn?(ramp?sw(0)+' → '+sw(3):sw(0))+' '+unit:fmtSug(sug0))+'</b> · '+L.sugNote+' ('+unit+')</span>'+(last?'<span>'+L.last+': '+[...Array(n)].map((_,s)=>lv(s)||'–').join(' · ')+' '+unit+' ('+last.d.slice(8,10)+'/'+last.d.slice(5,7)+')</span>':'')+'</div>';
+   h+='<div class="kg"><span class="sugg">'+L.sug+': <b>'+(sn?(ramp?sw(0)+' → '+sw(3):sw(0))+' '+unit:fmtSug(sug0))+'</b>'+(sn?wtl(slug):'')+' · '+L.sugNote+' ('+unit+')</span>'+(last?'<span>'+L.last+': '+[...Array(n)].map((_,s)=>lv(s)||'–').join(' · ')+' '+unit+' ('+last.d.slice(8,10)+'/'+last.d.slice(5,7)+')</span>':'')+'</div>';
   } else if(kg){h+='<div class="kg"><span class="sugg">'+L.bw+'</span></div>'}
   if(alts.length)h+='<div class="alts"><span>'+L.busy+'</span>'+[slug0].concat(alts).filter(a=>a!==slug).map(a=>'<button type="button" class="altb" data-k="'+day+i+'" data-s="'+a+'" data-o="'+slug0+'">'+(a===slug0?'↩ ':'⇄ ')+EX[a][lang][0]+'</button>').join('')+'</div>';   card.innerHTML=h;if(ds.length&&ds.filter(Boolean).length>=n)card.classList.add('complete');list.appendChild(card);
  });

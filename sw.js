@@ -1,7 +1,7 @@
 // Allenamento — service worker: uso offline.
 // Pagina: prima la rete (così gli aggiornamenti arrivano subito), poi la copia salvata.
 // Font e icone: copia salvata, aggiornata in background.
-const CACHE = 'allenamento-v39';
+const CACHE = 'allenamento-v40';
 const CORE = ['./', 'index.html', 'alimentazione.html', 'manifest.webmanifest', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/icon-maskable-512.png'];
 
 self.addEventListener('install', e => {
